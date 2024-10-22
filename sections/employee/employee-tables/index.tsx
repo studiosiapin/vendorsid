@@ -8,6 +8,7 @@ import { Employee } from '@/constants/data';
 import { columns } from '../employee-tables/columns';
 import {
   GENDER_OPTIONS,
+  ROLE_OPTIONS,
   useEmployeeTableFilters
 } from './use-employee-table-filters';
 
@@ -20,7 +21,9 @@ export default function EmployeeTable({
 }) {
   const {
     genderFilter,
+    roleFilter,
     setGenderFilter,
+    setRoleFilter,
     isAnyFilterActive,
     resetFilters,
     searchQuery,
@@ -43,6 +46,13 @@ export default function EmployeeTable({
           options={GENDER_OPTIONS}
           setFilterValue={setGenderFilter}
           filterValue={genderFilter}
+        />
+        <DataTableFilterBox
+          filterKey="job"
+          title="Peran"
+          options={ROLE_OPTIONS}
+          setFilterValue={setRoleFilter}
+          filterValue={roleFilter}
         />
         <DataTableResetFilter
           isFilterActive={isAnyFilterActive}

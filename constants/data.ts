@@ -7,6 +7,8 @@ export type User = {
   role: string;
   verified: boolean;
   status: string;
+  phone: string;
+  email: string;
 };
 export const users: User[] = [
   {
@@ -15,7 +17,9 @@ export const users: User[] = [
     company: 'Dell',
     role: 'Frontend Developer',
     verified: false,
-    status: 'Active'
+    status: 'Active',
+    phone: '093209320',
+    email: 'XNqyY@example.com'
   },
   {
     id: 2,
@@ -23,7 +27,9 @@ export const users: User[] = [
     company: 'TechCorp',
     role: 'Backend Developer',
     verified: true,
-    status: 'Active'
+    status: 'Active',
+    phone: '093209320',
+    email: 'XNqyY@example.com'
   },
   {
     id: 3,
@@ -31,7 +37,9 @@ export const users: User[] = [
     company: 'WebTech',
     role: 'UI Designer',
     verified: true,
-    status: 'Active'
+    status: 'Active',
+    phone: '093209320',
+    email: 'XNqyY@example.com'
   },
   {
     id: 4,
@@ -39,7 +47,9 @@ export const users: User[] = [
     company: 'Innovate Inc.',
     role: 'Fullstack Developer',
     verified: false,
-    status: 'Inactive'
+    status: 'Inactive',
+    phone: '093209320',
+    email: 'XNqyY@example.com'
   },
   {
     id: 5,
@@ -47,7 +57,9 @@ export const users: User[] = [
     company: 'TechGuru',
     role: 'Product Manager',
     verified: true,
-    status: 'Active'
+    status: 'Active',
+    phone: '093209320',
+    email: 'XNqyY@example.com'
   },
   {
     id: 6,
@@ -55,7 +67,9 @@ export const users: User[] = [
     company: 'CodeGenius',
     role: 'QA Engineer',
     verified: false,
-    status: 'Active'
+    status: 'Active',
+    phone: '093209320',
+    email: 'XNqyY@example.com'
   },
   {
     id: 7,
@@ -63,7 +77,9 @@ export const users: User[] = [
     company: 'SoftWorks',
     role: 'UX Designer',
     verified: true,
-    status: 'Active'
+    status: 'Active',
+    phone: '093209320',
+    email: 'XNqyY@example.com'
   },
   {
     id: 8,
@@ -71,7 +87,9 @@ export const users: User[] = [
     company: 'DevCraft',
     role: 'DevOps Engineer',
     verified: false,
-    status: 'Active'
+    status: 'Active',
+    phone: '093209320',
+    email: 'XNqyY@example.com'
   },
   {
     id: 9,
@@ -79,7 +97,9 @@ export const users: User[] = [
     company: 'WebSolutions',
     role: 'Frontend Developer',
     verified: true,
-    status: 'Active'
+    status: 'Active',
+    phone: '093209320',
+    email: 'XNqyY@example.com'
   },
   {
     id: 10,
@@ -87,7 +107,9 @@ export const users: User[] = [
     company: 'DataTech',
     role: 'Data Analyst',
     verified: false,
-    status: 'Active'
+    status: 'Active',
+    phone: '093209320',
+    email: 'XNqyY@example.com'
   }
 ];
 
@@ -121,48 +143,127 @@ export type Product = {
   updated_at: string;
 };
 
+export type Bahan = {
+  id: number;
+  photo_url: string;
+  name: string;
+  description: string;
+};
+
+export type Jenis = {
+  id: number;
+  photo_url: string;
+  name: string;
+  description: string;
+};
+
+export type Ukuran = {
+  id: number;
+  name: string;
+  description: string;
+};
+
+export type Desainer = {
+  id: number;
+  name: string;
+  description: string;
+  portfolio: string;
+  phone: string;
+};
+
+export type Learning = {
+  id: number;
+  name: string;
+  description: string;
+  source: string;
+};
+
 export const navItems: NavItem[] = [
   {
-    title: 'Dashboard',
+    title: 'Overview',
     href: '/dashboard',
     icon: 'dashboard',
-    label: 'Dashboard'
+    label: 'overview'
   },
   {
-    title: 'Employee',
-    href: '/dashboard/employee',
-    icon: 'user',
-    label: 'employee'
+    title: 'Pemesanan',
+    href: '/dashboard/product',
+    icon: 'billing',
+    label: 'pemesanan'
   },
   {
-    title: 'Product',
+    title: 'Produksi',
     href: '/dashboard/product',
     icon: 'product',
-    label: 'product'
+    label: 'produksi'
   },
   {
-    title: 'Account',
-    icon: 'user',
+    title: 'Pengaturan',
+    icon: 'settings',
     label: 'account',
     children: [
       {
-        title: 'Profile',
-        href: '/dashboard/profile',
-        icon: 'userPen',
-        label: 'profile'
-      },
-      {
-        title: 'Login',
-        href: '/',
-        icon: 'login',
-        label: 'login'
+        title: 'User',
+        href: '/dashboard/employee',
+        icon: 'user',
+        label: 'user'
       }
     ]
   },
   {
-    title: 'Kanban',
-    href: '/dashboard/kanban',
-    icon: 'kanban',
-    label: 'kanban'
+    title: 'Master Data',
+    icon: 'laptop',
+    label: 'master data',
+    children: [
+      {
+        title: 'Bahan',
+        href: '/dashboard/data/bahan',
+        icon: 'chevronRight',
+        label: 'bahan'
+      },
+      {
+        title: 'Ukuran',
+        href: '/dashboard/data/ukuran',
+        icon: 'chevronRight',
+        label: 'ukuran'
+      },
+      {
+        title: 'Jenis',
+        href: '/dashboard/data/jenis',
+        icon: 'chevronRight',
+        label: 'jenis'
+      },
+      {
+        title: 'Desainer',
+        href: '/dashboard/data/desainer',
+        icon: 'chevronRight',
+        label: 'desainer'
+      },
+      {
+        title: 'Pembelajaran',
+        href: '/dashboard/data/pembelajaran',
+        icon: 'chevronRight',
+        label: 'pembelajaran'
+      }
+    ]
+  },
+  {
+    title: 'Referensi',
+    icon: 'help',
+    label: 'referensi',
+    children: [
+      {
+        title: 'Desainer',
+        href: '/dashboard/data/desainer',
+        icon: 'chevronRight',
+        label: 'desainer'
+      },
+      {
+        title: 'Pembelajaran',
+        href: '/dashboard/data/pembelajaran',
+        icon: 'chevronRight',
+        label: 'pembelajaran'
+      }
+    ]
   }
 ];

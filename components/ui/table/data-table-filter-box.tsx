@@ -52,7 +52,7 @@ export function DataTableFilterBox({
     const values = filterValue.split('.');
     return new Set(values.filter((value) => value !== ''));
   }, [filterValue]);
-
+  console.log(selectedValuesSet);
   const handleSelect = (value: string) => {
     const newSet = new Set(selectedValuesSet);
     if (newSet.has(value)) {

@@ -3,8 +3,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { matchSorter } from 'match-sorter'; // For filtering
-import sortBy from 'sort-by'; // For sorting
 import { faker } from '@faker-js/faker';
+import { Bahan, Desainer, Jenis, Learning, Ukuran } from './data';
 
 // Define the shape of User data
 
@@ -39,12 +39,14 @@ export const fakeUsers = {
     function generateRandomUserData(id: number): User {
       const genders = ['male', 'female'];
       const jobs = [
-        'Software Engineer',
-        'Data Scientist',
-        'Marketing Manager',
-        'Graphic Designer',
-        'Sales Manager',
-        'Product Manager'
+        'Super Admin',
+        'Admin',
+        'Reseller',
+        'Design Setting',
+        'Printing',
+        'Pressing',
+        'Sewering',
+        'Finishing'
       ];
       const cities = [
         'San Francisco',
@@ -112,9 +114,11 @@ export const fakeUsers = {
   // Get all users with optional gender filtering and search
   async getAll({
     genders = [],
+    jobs = [],
     search
   }: {
     genders?: string[];
+    jobs?: string[];
     search?: string;
   }) {
     let users = [...this.records];
@@ -122,6 +126,10 @@ export const fakeUsers = {
     // Filter users based on selected genders
     if (genders.length > 0) {
       users = users.filter((user) => genders.includes(user.gender));
+    }
+
+    if (jobs.length > 0) {
+      users = users.filter((user) => jobs.includes(user.job));
     }
 
     // Search functionality across multiple fields
@@ -148,16 +156,24 @@ export const fakeUsers = {
     page = 1,
     limit = 10,
     genders,
-    search
+    search,
+    job
   }: {
     page?: number;
     limit?: number;
     genders?: string;
     search?: string;
+    job?: string;
   }) {
     const gendersArray = genders ? genders.split('.') : [];
+    const jobsArray = job ? job.split('.') : [];
     console.log('gendersArray', gendersArray);
-    const allUsers = await this.getAll({ genders: gendersArray, search });
+    console.log('jobsArray', jobsArray);
+    const allUsers = await this.getAll({
+      genders: gendersArray,
+      jobs: jobsArray,
+      search
+    });
     const totalUsers = allUsers.length;
 
     // Pagination logic
@@ -304,3 +320,387 @@ export const fakeProducts = {
 
 // Initialize sample products
 fakeProducts.initialize();
+
+// Bahan
+// Mock product data store
+export const fakeBahans = {
+  records: [] as Bahan[], // Holds the list of product objects
+
+  // Initialize with sample data
+  initialize() {
+    const sampleData: Bahan[] = [];
+    function generateRandomProductData(id: number): Bahan {
+      return {
+        id,
+        name: faker.commerce.productName(),
+        description: faker.commerce.productDescription(),
+        photo_url: `https://api.slingacademy.com/public/sample-products/${id}.png`
+      };
+    }
+
+    // Generate remaining records
+    for (let i = 1; i <= 20; i++) {
+      sampleData.push(generateRandomProductData(i));
+    }
+
+    this.records = sampleData;
+  },
+
+  // Get all products with optional category filtering and search
+  async getAll({ search }: { search?: string }) {
+    let data = [...this.records];
+
+    // Search functionality across multiple fields
+    if (search) {
+      data = matchSorter(data, search, {
+        keys: ['name', 'description', 'category']
+      });
+    }
+
+    return data;
+  },
+
+  // Get paginated results with optional category filtering and search
+  async getData({
+    page = 1,
+    limit = 10,
+    search
+  }: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) {
+    const allData = await this.getAll({
+      search
+    });
+    const totalData = allData.length;
+
+    // Pagination logic
+    const offset = (page - 1) * limit;
+    const paginatedData = allData.slice(offset, offset + limit);
+
+    // Mock current time
+    const currentTime = new Date().toISOString();
+
+    // Return paginated response
+    return {
+      success: true,
+      time: currentTime,
+      message: 'Sample data for testing and learning purposes',
+      total_data: totalData,
+      offset,
+      limit,
+      data: paginatedData
+    };
+  }
+};
+
+// Initialize sample products
+fakeBahans.initialize();
+
+// Jenis
+// Mock product data store
+export const fakeJenis = {
+  records: [] as Jenis[], // Holds the list of product objects
+
+  // Initialize with sample data
+  initialize() {
+    const sampleData: Jenis[] = [];
+    function generateRandomProductData(id: number): Jenis {
+      return {
+        id,
+        name: faker.commerce.productName(),
+        description: faker.commerce.productDescription(),
+        photo_url: `https://api.slingacademy.com/public/sample-products/${id}.png`
+      };
+    }
+
+    // Generate remaining records
+    for (let i = 1; i <= 20; i++) {
+      sampleData.push(generateRandomProductData(i));
+    }
+
+    this.records = sampleData;
+  },
+
+  // Get all products with optional category filtering and search
+  async getAll({ search }: { search?: string }) {
+    let data = [...this.records];
+
+    // Search functionality across multiple fields
+    if (search) {
+      data = matchSorter(data, search, {
+        keys: ['name', 'description', 'category']
+      });
+    }
+
+    return data;
+  },
+
+  // Get paginated results with optional category filtering and search
+  async getData({
+    page = 1,
+    limit = 10,
+    search
+  }: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) {
+    const allData = await this.getAll({
+      search
+    });
+    const totalData = allData.length;
+
+    // Pagination logic
+    const offset = (page - 1) * limit;
+    const paginatedData = allData.slice(offset, offset + limit);
+
+    // Mock current time
+    const currentTime = new Date().toISOString();
+
+    // Return paginated response
+    return {
+      success: true,
+      time: currentTime,
+      message: 'Sample data for testing and learning purposes',
+      total_data: totalData,
+      offset,
+      limit,
+      data: paginatedData
+    };
+  }
+};
+
+// Initialize sample products
+fakeJenis.initialize();
+
+// Ukuran
+// Mock product data store
+export const fakeUkuran = {
+  records: [] as Ukuran[], // Holds the list of product objects
+
+  // Initialize with sample data
+  initialize() {
+    const sampleData: Ukuran[] = [];
+    function generateRandomProductData(id: number): Ukuran {
+      return {
+        id,
+        name: faker.commerce.productName(),
+        description: faker.commerce.productDescription()
+      };
+    }
+
+    // Generate remaining records
+    for (let i = 1; i <= 20; i++) {
+      sampleData.push(generateRandomProductData(i));
+    }
+
+    this.records = sampleData;
+  },
+
+  // Get all products with optional category filtering and search
+  async getAll({ search }: { search?: string }) {
+    let data = [...this.records];
+
+    // Search functionality across multiple fields
+    if (search) {
+      data = matchSorter(data, search, {
+        keys: ['name', 'description', 'category']
+      });
+    }
+
+    return data;
+  },
+
+  // Get paginated results with optional category filtering and search
+  async getData({
+    page = 1,
+    limit = 10,
+    search
+  }: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) {
+    const allData = await this.getAll({
+      search
+    });
+    const totalData = allData.length;
+
+    // Pagination logic
+    const offset = (page - 1) * limit;
+    const paginatedData = allData.slice(offset, offset + limit);
+
+    // Mock current time
+    const currentTime = new Date().toISOString();
+
+    // Return paginated response
+    return {
+      success: true,
+      time: currentTime,
+      message: 'Sample data for testing and learning purposes',
+      total_data: totalData,
+      offset,
+      limit,
+      data: paginatedData
+    };
+  }
+};
+
+// Initialize sample products
+fakeUkuran.initialize();
+
+// Desainer
+// Mock product data store
+export const fakeDesainer = {
+  records: [] as Desainer[], // Holds the list of product objects
+
+  // Initialize with sample data
+  initialize() {
+    const sampleData: Desainer[] = [];
+    function generateRandomProductData(id: number): Desainer {
+      return {
+        id,
+        name: faker.commerce.productName(),
+        description: faker.commerce.productDescription(),
+        portfolio: faker.image.url(),
+        phone: faker.phone.number()
+      };
+    }
+
+    // Generate remaining records
+    for (let i = 1; i <= 20; i++) {
+      sampleData.push(generateRandomProductData(i));
+    }
+
+    this.records = sampleData;
+  },
+
+  // Get all products with optional category filtering and search
+  async getAll({ search }: { search?: string }) {
+    let data = [...this.records];
+
+    // Search functionality across multiple fields
+    if (search) {
+      data = matchSorter(data, search, {
+        keys: ['name', 'description', 'category']
+      });
+    }
+
+    return data;
+  },
+
+  // Get paginated results with optional category filtering and search
+  async getData({
+    page = 1,
+    limit = 10,
+    search
+  }: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) {
+    const allData = await this.getAll({
+      search
+    });
+    const totalData = allData.length;
+    // Pagination logic
+    const offset = (page - 1) * limit;
+    const paginatedData = allData.slice(offset, offset + limit);
+
+    // Mock current time
+    const currentTime = new Date().toISOString();
+
+    // Return paginated response
+    return {
+      success: true,
+      time: currentTime,
+      message: 'Sample data for testing and learning purposes',
+      total_data: totalData,
+      offset,
+      limit,
+      data: paginatedData
+    };
+  }
+};
+
+// Initialize sample products
+fakeDesainer.initialize();
+
+// Desainer
+// Mock product data store
+export const fakeLearning = {
+  records: [] as Learning[], // Holds the list of product objects
+
+  // Initialize with sample data
+  initialize() {
+    const sampleData: Learning[] = [];
+    function generateRandomProductData(id: number): Learning {
+      return {
+        id,
+        name: faker.commerce.productName(),
+        description: faker.commerce.productDescription(),
+        source: faker.internet.url()
+      };
+    }
+
+    // Generate remaining records
+    for (let i = 1; i <= 20; i++) {
+      sampleData.push(generateRandomProductData(i));
+    }
+
+    this.records = sampleData;
+  },
+
+  // Get all products with optional category filtering and search
+  async getAll({ search }: { search?: string }) {
+    let data = [...this.records];
+
+    // Search functionality across multiple fields
+    if (search) {
+      data = matchSorter(data, search, {
+        keys: ['name', 'description', 'category']
+      });
+    }
+
+    return data;
+  },
+
+  // Get paginated results with optional category filtering and search
+  async getData({
+    page = 1,
+    limit = 10,
+    search
+  }: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) {
+    const allData = await this.getAll({
+      search
+    });
+    const totalData = allData.length;
+
+    // Pagination logic
+    const offset = (page - 1) * limit;
+    const paginatedData = allData.slice(offset, offset + limit);
+
+    // Mock current time
+    const currentTime = new Date().toISOString();
+
+    // Return paginated response
+    return {
+      success: true,
+      time: currentTime,
+      message: 'Sample data for testing and learning purposes',
+      total_data: totalData,
+      offset,
+      limit,
+      data: paginatedData
+    };
+  }
+};
+
+// Initialize sample products
+fakeLearning.initialize();

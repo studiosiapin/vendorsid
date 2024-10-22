@@ -28,13 +28,13 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: 'Name must be at least 2 characters.'
   }),
-  country: z.string({
+  job: z.string({
     required_error: 'Please select a country.'
   }),
   email: z.string().email({
     message: 'Please enter a valid email address.'
   }),
-  company: z.string().min(1, {
+  phone: z.string().min(1, {
     message: 'Company name is required.'
   }),
   gender: z.enum(['male', 'female', 'other'], {
@@ -47,9 +47,9 @@ export default function EmployeeForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      country: '',
+      job: '',
       email: '',
-      company: '',
+      phone: '',
       gender: undefined
     }
   });
@@ -84,25 +84,27 @@ export default function EmployeeForm() {
               />
               <FormField
                 control={form.control}
-                name="country"
+                name="job"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Country</FormLabel>
+                    <FormLabel>Role</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a country" />
+                          <SelectValue placeholder="Pilih Role" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="usa">USA</SelectItem>
-                        <SelectItem value="uk">UK</SelectItem>
-                        <SelectItem value="canada">Canada</SelectItem>
-                        <SelectItem value="australia">Australia</SelectItem>
-                        <SelectItem value="germany">Germany</SelectItem>
-                        <SelectItem value="france">France</SelectItem>
-                        <SelectItem value="japan">Japan</SelectItem>
-                        <SelectItem value="brazil">Brazil</SelectItem>
+                        <SelectItem value="super_admin">Super Admin</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="reseller">Reseller</SelectItem>
+                        <SelectItem value="design_setting">
+                          Design Setting
+                        </SelectItem>
+                        <SelectItem value="printing">Printing</SelectItem>
+                        <SelectItem value="pressing">Pressing</SelectItem>
+                        <SelectItem value="sewering">Sewering</SelectItem>
+                        <SelectItem value="finishing">Finishing</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -128,12 +130,12 @@ export default function EmployeeForm() {
               />
               <FormField
                 control={form.control}
-                name="company"
+                name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Company</FormLabel>
+                    <FormLabel>No Whatsapp</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your company" {...field} />
+                      <Input placeholder="Masukkan nomor Whatsapp" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -163,12 +165,6 @@ export default function EmployeeForm() {
                           <RadioGroupItem value="female" />
                         </FormControl>
                         <FormLabel className="font-normal">Female</FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-2">
-                        <FormControl>
-                          <RadioGroupItem value="other" />
-                        </FormControl>
-                        <FormLabel className="font-normal">Other</FormLabel>
                       </FormItem>
                     </RadioGroup>
                   </FormControl>

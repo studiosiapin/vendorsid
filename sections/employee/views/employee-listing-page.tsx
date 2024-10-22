@@ -23,13 +23,15 @@ export default async function EmployeeListingPage({}: TEmployeeListingPage) {
   const page = searchParamsCache.get('page');
   const search = searchParamsCache.get('q');
   const gender = searchParamsCache.get('gender');
+  const job = searchParamsCache.get('job');
   const pageLimit = searchParamsCache.get('limit');
 
   const filters = {
     page,
     limit: pageLimit,
     ...(search && { search }),
-    ...(gender && { genders: gender })
+    ...(gender && { genders: gender }),
+    ...(job && { job: job })
   };
 
   // mock api call
@@ -44,7 +46,7 @@ export default async function EmployeeListingPage({}: TEmployeeListingPage) {
 
         <div className="flex items-start justify-between">
           <Heading
-            title={`Employee (${totalUsers})`}
+            title={`User`}
             description="Manage employees (Server side table functionalities.)"
           />
 
