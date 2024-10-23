@@ -42,10 +42,10 @@ const BaseForm: React.FC<OrderFormType> = ({ initialData, categories }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imgLoading, setImgLoading] = useState(false);
-  const title = initialData ? 'Edit product' : 'Create Your Profile';
+  const title = initialData ? 'Edit product' : 'Tambahkan Pesanan Anda';
   const description = initialData
     ? 'Edit a product.'
-    : 'To create your resume, we first need some basic information about you.';
+    : 'Silahkan atur data pesanan anda.';
   const toastMessage = initialData ? 'Product updated.' : 'Product created.';
   const action = initialData ? 'Save changes' : 'Create';
   const [previousStep, setPreviousStep] = useState(0);

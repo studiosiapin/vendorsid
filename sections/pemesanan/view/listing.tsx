@@ -33,8 +33,8 @@ export default async function ListingPage({}: OrderListingPage) {
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <Heading
-            title={`Ukuran`}
-            description="Atur Ukuran-Ukuran yang akan digunakan"
+            title={`Pemesanan`}
+            description="Atur pesanan-pesanan anda"
           />
           <Link
             href={'/dashboard/pemesanan/create'}

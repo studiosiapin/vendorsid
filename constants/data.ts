@@ -196,16 +196,16 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Pemesanan',
-    href: '/dashboard/product',
+    href: '/dashboard/pemesanan',
     icon: 'billing',
     label: 'pemesanan'
   },
-  {
-    title: 'Produksi',
-    href: '/dashboard/product',
-    icon: 'product',
-    label: 'produksi'
-  },
+  // {
+  //   title: 'Produksi',
+  //   href: '/dashboard/product',
+  //   icon: 'product',
+  //   label: 'produksi'
+  // },
   {
     title: 'Pengaturan',
     icon: 'settings',
