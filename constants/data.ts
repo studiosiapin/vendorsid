@@ -178,6 +178,15 @@ export type Learning = {
   source: string;
 };
 
+export type Order = {
+  id: number;
+  title: string;
+  description: string;
+  invoice_id: string;
+  status: string;
+  reseller: string;
+};
+
 export const navItems: NavItem[] = [
   {
     title: 'Overview',

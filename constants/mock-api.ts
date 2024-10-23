@@ -4,7 +4,7 @@
 
 import { matchSorter } from 'match-sorter'; // For filtering
 import { faker } from '@faker-js/faker';
-import { Bahan, Desainer, Jenis, Learning, Ukuran } from './data';
+import { Bahan, Desainer, Jenis, Learning, Order, Ukuran } from './data';
 
 // Define the shape of User data
 
@@ -628,7 +628,7 @@ export const fakeDesainer = {
 // Initialize sample products
 fakeDesainer.initialize();
 
-// Desainer
+// Learning
 // Mock product data store
 export const fakeLearning = {
   records: [] as Learning[], // Holds the list of product objects
@@ -704,3 +704,83 @@ export const fakeLearning = {
 
 // Initialize sample products
 fakeLearning.initialize();
+
+// Learning
+// Mock product data store
+export const fakeOrder = {
+  records: [] as Order[], // Holds the list of product objects
+
+  // Initialize with sample data
+  initialize() {
+    const sampleData: Order[] = [];
+    function generateRandomProductData(id: number): Order {
+      const statusList = ['Pending', 'Processing', 'Delivered'];
+      return {
+        id,
+        title: faker.commerce.productName(),
+        description: faker.commerce.productDescription(),
+        invoice_id: faker.commerce.isbn(),
+        status: faker.helpers.arrayElement(statusList),
+        reseller: faker.person.firstName()
+      };
+    }
+
+    // Generate remaining records
+    for (let i = 1; i <= 20; i++) {
+      sampleData.push(generateRandomProductData(i));
+    }
+
+    this.records = sampleData;
+  },
+
+  // Get all products with optional category filtering and search
+  async getAll({ search }: { search?: string }) {
+    let data = [...this.records];
+
+    // Search functionality across multiple fields
+    if (search) {
+      data = matchSorter(data, search, {
+        keys: ['name', 'description', 'category']
+      });
+    }
+
+    return data;
+  },
+
+  // Get paginated results with optional category filtering and search
+  async getData({
+    page = 1,
+    limit = 10,
+    search
+  }: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) {
+    const allData = await this.getAll({
+      search
+    });
+    const totalData = allData.length;
+
+    // Pagination logic
+    const offset = (page - 1) * limit;
+    const paginatedData = allData.slice(offset, offset + limit);
+
+    // Mock current time
+    const currentTime = new Date().toISOString();
+
+    // Return paginated response
+    return {
+      success: true,
+      time: currentTime,
+      message: 'Sample data for testing and learning purposes',
+      total_data: totalData,
+      offset,
+      limit,
+      data: paginatedData
+    };
+  }
+};
+
+// Initialize sample products
+fakeOrder.initialize();
