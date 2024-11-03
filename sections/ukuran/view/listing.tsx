@@ -13,21 +13,6 @@ import UkuranTable from '../tables';
 type UkuranListingPage = {};
 
 export default async function ListingPage({}: UkuranListingPage) {
-  // Showcasing the use of search params cache in nested RSCs
-  const page = searchParamsCache.get('page');
-  const search = searchParamsCache.get('q');
-  const pageLimit = searchParamsCache.get('limit');
-
-  const filters = {
-    page,
-    limit: pageLimit,
-    ...(search && { search })
-  };
-
-  const data = await fakeUkuran.getData(filters);
-  const totalData = data.total_data;
-  const Ukurans: Ukuran[] = data.data;
-
   return (
     <PageContainer>
       <div className="space-y-4">
@@ -44,7 +29,7 @@ export default async function ListingPage({}: UkuranListingPage) {
           </Link>
         </div>
         <Separator />
-        <UkuranTable data={Ukurans} totalData={totalData} />
+        <UkuranTable />
       </div>
     </PageContainer>
   );
