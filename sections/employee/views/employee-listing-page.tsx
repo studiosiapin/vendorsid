@@ -4,8 +4,6 @@ import EmployeeTable from '../employee-tables';
 import { buttonVariants } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { Employee } from '@/constants/data';
-import { fakeUsers } from '@/constants/mock-api';
 import { searchParamsCache } from '@/lib/searchparams';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
@@ -19,36 +17,13 @@ const breadcrumbItems = [
 type TEmployeeListingPage = {};
 
 export default async function EmployeeListingPage({}: TEmployeeListingPage) {
-  // Showcasing the use of search params cache in nested RSCs
-  const page = searchParamsCache.get('page');
-  const search = searchParamsCache.get('q');
-  const gender = searchParamsCache.get('gender');
-  const job = searchParamsCache.get('job');
-  const pageLimit = searchParamsCache.get('limit');
-
-  const filters = {
-    page,
-    limit: pageLimit,
-    ...(search && { search }),
-    ...(gender && { genders: gender }),
-    ...(job && { job: job })
-  };
-
-  // mock api call
-  const data = await fakeUsers.getUsers(filters);
-  const totalUsers = data.total_users;
-  const employee: Employee[] = data.users;
-
   return (
     <PageContainer scrollable>
       <div className="space-y-4">
         <Breadcrumbs items={breadcrumbItems} />
 
         <div className="flex items-start justify-between">
-          <Heading
-            title={`User`}
-            description="Manage employees (Server side table functionalities.)"
-          />
+          <Heading title={`User`} description="Manage employees" />
 
           <Link
             href={'/dashboard/employee/new'}
@@ -58,7 +33,7 @@ export default async function EmployeeListingPage({}: TEmployeeListingPage) {
           </Link>
         </div>
         <Separator />
-        <EmployeeTable data={employee} totalData={totalUsers} />
+        <EmployeeTable />
       </div>
     </PageContainer>
   );

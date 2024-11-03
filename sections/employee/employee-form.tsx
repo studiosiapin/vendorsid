@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useMemo, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -23,46 +23,107 @@ import {
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: 'Name must be at least 2 characters.'
-  }),
-  job: z.string({
-    required_error: 'Please select a country.'
-  }),
-  email: z.string().email({
-    message: 'Please enter a valid email address.'
-  }),
-  phone: z.string().min(1, {
-    message: 'Company name is required.'
-  }),
-  gender: z.enum(['male', 'female', 'other'], {
-    required_error: 'Please select a gender.'
-  })
-});
+import { toast } from 'sonner';
+import { useParams, useRouter } from 'next/navigation';
+import { useCreateUser, useGetUserById, useUpdateUser } from '@/hooks/useUser';
+import {
+  baseUserFormSchema,
+  userFormSchemaDefault
+} from '@/types/schema/userFormSchema';
 
 export default function EmployeeForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { employeeId } = useParams<{ employeeId: string }>();
+  const isEdit = useMemo(() => {
+    return employeeId !== undefined && employeeId !== 'new';
+  }, [employeeId]);
+  const { isLoading: isCreating, createUser } = useCreateUser();
+  const { isLoading: isFetching, getUserById } = useGetUserById();
+  const { isLoading: isUpdating, updateUser } = useUpdateUser();
+
+  const userFormSchema = useMemo(() => {
+    return baseUserFormSchema
+      .extend({
+        password: isEdit
+          ? z
+              .string()
+              .min(6, {
+                message: 'Password must be at least 6 characters.'
+              })
+              .optional()
+          : z.string().min(6, {
+              message: 'Password must be at least 6 characters.'
+            }),
+        confirmPassword: isEdit
+          ? z
+              .string()
+              .min(6, {
+                message: 'Confirm Password must be at least 6 characters.'
+              })
+              .optional()
+          : z.string().min(6, {
+              message: 'Confirm Password must be at least 6 characters.'
+            })
+      })
+      .refine((data) => data.password === data.confirmPassword, {
+        message: 'Passwords do not match',
+        path: ['confirmPassword']
+      });
+  }, [isEdit]);
+
+  const form = useForm<z.infer<typeof userFormSchema>>({
+    resolver: zodResolver(userFormSchema),
     defaultValues: {
       name: '',
-      job: '',
+      role: '',
       email: '',
+      password: '',
+      confirmPassword: '',
       phone: '',
       gender: undefined
     }
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isEdit) {
+      (async () => {
+        try {
+          const userData = await getUserById(employeeId);
+          form.reset(userData.data);
+        } catch (error) {
+          toast.error('Error fetching user data');
+          router.push('/dashboard/employee');
+        }
+      })();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [employeeId]);
+
+  async function onSubmit(values: z.infer<typeof userFormSchema>) {
+    try {
+      if (isEdit) {
+        await updateUser(
+          employeeId,
+          values as z.infer<typeof userFormSchemaDefault>
+        );
+        toast.success('User updated successfully');
+        router.push('/dashboard/employee');
+        return;
+      }
+      await createUser(values as z.infer<typeof userFormSchemaDefault>);
+      toast.success('User created successfully');
+      router.push('/dashboard/employee');
+    } catch (error) {
+      toast.error('Error creating user');
+    }
   }
 
   return (
     <Card className="mx-auto w-full">
       <CardHeader>
         <CardTitle className="text-left text-2xl font-bold">
-          Employee Information
+          {isEdit && 'Edit'} Employee Information
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -84,14 +145,14 @@ export default function EmployeeForm() {
               />
               <FormField
                 control={form.control}
-                name="job"
+                name="role"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Pilih Role" />
+                          <SelectValue placeholder="Select Role" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -121,6 +182,7 @@ export default function EmployeeForm() {
                       <Input
                         type="email"
                         placeholder="Enter your email"
+                        autoComplete="off"
                         {...field}
                       />
                     </FormControl>
@@ -136,6 +198,42 @@ export default function EmployeeForm() {
                     <FormLabel>No Whatsapp</FormLabel>
                     <FormControl>
                       <Input placeholder="Masukkan nomor Whatsapp" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Enter your password"
+                        autoComplete="off"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Confirm your password"
+                        autoComplete="off"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -172,7 +270,16 @@ export default function EmployeeForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button
+              type="submit"
+              disabled={isCreating || isFetching || isUpdating}
+            >
+              {isCreating || isFetching || isUpdating
+                ? 'Loading...'
+                : isEdit
+                ? 'Update'
+                : 'Create'}
+            </Button>
           </form>
         </Form>
       </CardContent>

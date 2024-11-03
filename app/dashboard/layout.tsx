@@ -1,5 +1,6 @@
 import Header from '@/components/layout/header';
 import Sidebar from '@/components/layout/sidebar';
+import { Toaster } from '@/components/ui/toaster';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default function DashboardLayout({
       <main className="w-full flex-1 overflow-hidden">
         <Header />
         {children}
+        <Toaster />
       </main>
     </div>
   );

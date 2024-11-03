@@ -10,7 +10,7 @@ export const searchParams = {
   limit: parseAsInteger.withDefault(10),
   q: parseAsString,
   gender: parseAsString,
-  job: parseAsString,
+  role: parseAsString,
   categories: parseAsString
 };
 
