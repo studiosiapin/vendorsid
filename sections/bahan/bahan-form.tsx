@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -8,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,15 +14,19 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { FileUploader } from '@/components/file-uploader';
+import useUploadImage from '@/hooks/useUploadImage';
+import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
+import { CircleX } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import {
+  useCreateBahan,
+  useGetBahanById,
+  useUpdateBahan
+} from '@/hooks/useBahan';
+import toast from 'react-hot-toast';
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -35,25 +37,9 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 const formSchema = z.object({
-  image: z
-    .any()
-    .refine((files) => files?.length == 1, 'Image is required.')
-    .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`
-    )
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      '.jpg, .jpeg, .png and .webp files are accepted.'
-    ),
+  image: z.any().optional(),
   name: z.string().min(2, {
     message: 'Product name must be at least 2 characters.'
-  }),
-  category: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: 'You have to select at least one category.'
-  }),
-  price: z.string().refine((value) => !isNaN(parseFloat(value)), {
-    message: 'Price must be a valid number.'
   }),
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.'
@@ -61,49 +47,123 @@ const formSchema = z.object({
 });
 
 export default function BahanForm() {
+  const { imageUrl: upImageUrl, isUploading, uploadImage } = useUploadImage();
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const { Id } = useParams<{ Id: string }>();
+  const router = useRouter();
+  const isEdit = useMemo(() => {
+    return Id !== undefined && Id !== 'create';
+  }, [Id]);
+
+  const { isLoading: isCreating, createBahan } = useCreateBahan();
+  const { isLoading: isFetching, getBahanById } = useGetBahanById();
+  const { isLoading: isUpdating, updateBahan } = useUpdateBahan();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      image: [],
       name: '',
-      category: [],
-      price: '',
       description: ''
     }
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      if (isEdit) {
+        await updateBahan(Id, values, imageUrl || '');
+        toast.success('Ukuran updated successfully');
+        router.push('/dashboard/data/bahan');
+        return;
+      }
+      await createBahan(values, imageUrl || '');
+      toast.success('Ukuran created successfully');
+      router.push('/dashboard/data/bahan');
+    } catch (error) {
+      // toast.error('Error creating or updating bahan');
+    }
   }
+
+  useEffect(() => {
+    console.debug('id', Id);
+    if (isEdit) {
+      (async () => {
+        try {
+          const bahanData = await getBahanById(Id);
+          form.reset(bahanData.data);
+          setImageUrl(bahanData.data.imageUrl);
+        } catch (error) {
+          toast.error('Error fetching bahan data');
+          router.push('/dashboard/data/bahan');
+        }
+      })();
+    }
+  }, [Id]);
+
+  async function uploadFiles(files: File[]): Promise<void> {
+    await uploadImage(files[0]); // Pastikan uploadImage mengembalikan URL image
+    form.setValue('image', files); // Memastikan bahwa field image diperbarui
+  }
+
+  useEffect(() => {
+    if (upImageUrl) {
+      setImageUrl(upImageUrl);
+    }
+  }, [upImageUrl]);
 
   return (
     <Card className="mx-auto w-full">
       <CardHeader>
         <CardTitle className="text-left text-2xl font-bold">
-          Tambah Bahan
+          {isEdit ? 'Edit' : 'Tambah'}
+          Bahan
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="grid grid-cols-2 gap-5"
+          >
             <FormField
               control={form.control}
               name="image"
               render={({ field }) => (
-                <div className="space-y-6">
+                <div className="">
                   <FormItem className="w-full">
                     <FormLabel>Gambar</FormLabel>
                     <FormControl>
-                      <FileUploader
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        maxFiles={4}
-                        maxSize={4 * 1024 * 1024}
-                        // disabled={loading}
-                        // progresses={progresses}
-                        // pass the onUpload function here for direct upload
-                        // onUpload={uploadFiles}
-                        // disabled={isUploading}
-                      />
+                      <>
+                        {imageUrl && (
+                          <div className="relative">
+                            <div
+                              className="absolute right-1 top-1 cursor-pointer rounded-full bg-white p-1"
+                              onClick={() => {
+                                setImageUrl(null);
+                                form.setValue('image', []);
+                              }}
+                            >
+                              <CircleX size={24} className="text-red-500" />
+                            </div>
+                            <Image
+                              src={imageUrl}
+                              width={200}
+                              height={200}
+                              alt=""
+                              className="w-full"
+                            />
+                          </div>
+                        )}
+                        <FileUploader
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          maxFiles={1}
+                          maxSize={5 * 1024 * 1024}
+                          onUpload={uploadFiles}
+                          disabled={isUploading}
+                          className={imageUrl ? 'hidden' : ''}
+                        />
+                      </>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -111,7 +171,7 @@ export default function BahanForm() {
               )}
             />
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="flex flex-col gap-3">
               <FormField
                 control={form.control}
                 name="name"
@@ -142,8 +202,14 @@ export default function BahanForm() {
                   </FormItem>
                 )}
               />
+              <Button type="submit" className="mt-3">
+                {isCreating || isFetching || isUpdating
+                  ? 'Loading...'
+                  : isEdit
+                  ? 'Update'
+                  : 'Tambah'}
+              </Button>
             </div>
-            <Button type="submit">Tambah Bahan</Button>
           </form>
         </Form>
       </CardContent>

@@ -2,7 +2,11 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    domains: ['utfs.io', 'api.slingacademy.com']
+    domains: [
+      'utfs.io',
+      'api.slingacademy.com',
+      'bnumduzaszvwhatwtvoe.supabase.co'
+    ]
   }
 };
 
