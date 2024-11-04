@@ -16,6 +16,7 @@ import { Pagination } from '@/types/common';
 import { CircleX } from 'lucide-react';
 import { Ukuran } from '@prisma/client';
 import { UkuranCellAction } from './cell-action';
+import TableSkeleton from '@/components/skeleton/TableSkeleton';
 
 export default function UkuranTable() {
   const [data, setData] = useState<Ukuran[]>([]);
@@ -25,6 +26,7 @@ export default function UkuranTable() {
   const [page, setPage] = useState<number>(1); // Current page number
   const [limit, setLimit] = useState<number>(10); // Number of items per page
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Ref to hold the timeout
+  const [isLoading, setIsLoading] = useState(true);
 
   // Function to update the URL parameters
   const updateURLParams = () => {
@@ -37,6 +39,7 @@ export default function UkuranTable() {
 
   // Fetch data function
   const fetchData = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `/api/ukuran?searchQuery=${encodeURIComponent(
@@ -47,8 +50,10 @@ export default function UkuranTable() {
       setData(result.data);
       setPagination(result.pagination);
       setTotalData(result.total);
+      setIsLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
+      setIsLoading(false);
     }
   };
 
@@ -101,7 +106,7 @@ export default function UkuranTable() {
         )}
       </div>
 
-      {data.length > 0 ? (
+      {data.length > 0 && !isLoading && (
         <Table className="rounded border-2">
           <TableHeader>
             <TableRow>
@@ -127,9 +132,11 @@ export default function UkuranTable() {
             ))}
           </TableBody>
         </Table>
-      ) : (
-        <div>No data available.</div>
       )}
+
+      {!isLoading && data.length === 0 && <div>No data available.</div>}
+
+      <TableSkeleton show={isLoading} />
 
       {/* Pagination controls */}
       <div className="mt-4 flex items-center justify-end gap-3">

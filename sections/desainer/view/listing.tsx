@@ -13,21 +13,6 @@ import DesainerTable from '../tables';
 type DesainerListingPage = {};
 
 export default async function ListingPage({}: DesainerListingPage) {
-  // Showcasing the use of search params cache in nested RSCs
-  const page = searchParamsCache.get('page');
-  const search = searchParamsCache.get('q');
-  const pageLimit = searchParamsCache.get('limit');
-
-  const filters = {
-    page,
-    limit: pageLimit,
-    ...(search && { search })
-  };
-
-  const data = await fakeDesainer.getData(filters);
-  const totalData = data.total_data;
-  const Desainers: Desainer[] = data.data;
-
   return (
     <PageContainer>
       <div className="space-y-4">
@@ -44,7 +29,7 @@ export default async function ListingPage({}: DesainerListingPage) {
           </Link>
         </div>
         <Separator />
-        <DesainerTable data={Desainers} totalData={totalData} />
+        <DesainerTable />
       </div>
     </PageContainer>
   );

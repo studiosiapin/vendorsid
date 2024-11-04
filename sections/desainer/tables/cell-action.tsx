@@ -1,4 +1,5 @@
 'use client';
+
 import { AlertModal } from '@/components/modal/alert-modal';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,21 +9,42 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Desainer } from '@/constants/data';
+import { Desainer } from '@prisma/client';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 
-interface CellActionProps {
+interface DesainerCellActionProps {
   data: Desainer;
+  onDeleted: () => void;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+export const DesainerCellAction: React.FC<DesainerCellActionProps> = ({
+  data,
+  onDeleted
+}) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  const onConfirm = async () => {};
+  const onConfirm = async () => {
+    setLoading(true);
+    try {
+      await fetch(`/api/desainer/${data.id}`, {
+        method: 'DELETE'
+      });
+      router.refresh();
+      onDeleted();
+      toast.success('Desainer deleted successfully');
+    } catch (error) {
+      console.error('Error deleting desainer:', error);
+      toast.error('Error deleting desainer');
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
+  };
 
   return (
     <>
@@ -43,7 +65,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/jenis/${data.id}`)}
+            onClick={() => router.push(`/dashboard/data/desainer/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

@@ -16,6 +16,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import { Pagination } from '@/types/common';
 import { CellAction } from './cell-action';
 import { CircleX } from 'lucide-react';
+import TableSkeleton from '@/components/skeleton/TableSkeleton';
 
 export default function EmployeeTable() {
   const [data, setData] = useState<User[]>([]);
@@ -27,6 +28,7 @@ export default function EmployeeTable() {
   const [page, setPage] = useState<number>(1); // Current page number
   const [limit, setLimit] = useState<number>(10); // Number of items per page
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Ref to hold the timeout
+  const [isLoading, setIsLoading] = useState(true);
 
   // Function to update the URL parameters
   const updateURLParams = () => {
@@ -41,6 +43,7 @@ export default function EmployeeTable() {
 
   // Fetch data function
   const fetchData = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `/api/user?searchQuery=${encodeURIComponent(
@@ -53,8 +56,10 @@ export default function EmployeeTable() {
       setData(result.data);
       setPagination(result.pagination);
       setTotalData(result.total);
+      setIsLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
+      setIsLoading(false);
     }
   };
 
@@ -135,7 +140,7 @@ export default function EmployeeTable() {
         )}
       </div>
 
-      {data.length > 0 ? (
+      {data.length > 0 && !isLoading && (
         <Table className="rounded border-2">
           <TableHeader>
             <TableRow>
@@ -167,9 +172,10 @@ export default function EmployeeTable() {
             ))}
           </TableBody>
         </Table>
-      ) : (
-        <div>No data available.</div>
       )}
+      {!isLoading && data.length === 0 && <div>No data available.</div>}
+
+      <TableSkeleton show={isLoading} />
 
       {/* Pagination controls */}
       <div className="mt-4 flex items-center justify-end gap-3">
