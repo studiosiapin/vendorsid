@@ -1,4 +1,5 @@
 'use client';
+
 import { AlertModal } from '@/components/modal/alert-modal';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,21 +9,42 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Bahan } from '@/constants/data';
+import { Jenis } from '@prisma/client';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 
-interface CellActionProps {
-  data: Bahan;
+interface JenisCellActionProps {
+  data: Jenis;
+  onDeleted: () => void;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+export const JenisCellAction: React.FC<JenisCellActionProps> = ({
+  data,
+  onDeleted
+}) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  const onConfirm = async () => {};
+  const onConfirm = async () => {
+    setLoading(true);
+    try {
+      await fetch(`/api/jenis/${data.id}`, {
+        method: 'DELETE'
+      });
+      onDeleted(); // Call the function to update the table
+      toast.success('Jenis deleted successfully');
+      router.refresh(); // Refresh the page to reflect changes
+    } catch (error) {
+      console.error('Error deleting jenis:', error);
+      toast.error('Error deleting jenis');
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
+  };
 
   return (
     <>
@@ -32,7 +54,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onConfirm={onConfirm}
         loading={loading}
       />
-      <DropdownMenu modal={false}>
+      <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
             <span className="sr-only">Open menu</span>
@@ -43,7 +65,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/jenis/${data.id}`)}
+            onClick={() => router.push(`/dashboard/data/jenis/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
