@@ -17,6 +17,7 @@ import { CircleX } from 'lucide-react';
 import { Desainer } from '@prisma/client';
 import { DesainerCellAction } from './cell-action'; // Assuming you have a similar cell action component for Desainer
 import TableSkeleton from '@/components/skeleton/TableSkeleton';
+import Link from 'next/link';
 
 export default function DesainerTable() {
   const [data, setData] = useState<Desainer[]>([]);
@@ -122,7 +123,11 @@ export default function DesainerTable() {
               <TableRow key={desainer.id}>
                 <TableCell>{desainer.name}</TableCell>
                 <TableCell>{desainer.phone}</TableCell>
-                <TableCell>{desainer.portofolio}</TableCell>
+                <TableCell>
+                  <Link href={desainer.portofolio || ''} target="_blank">
+                    {desainer.portofolio}
+                  </Link>
+                </TableCell>
                 <TableCell>{desainer.description}</TableCell>
                 <TableCell>
                   <DesainerCellAction
