@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -30,6 +30,7 @@ import {
   baseUserFormSchema,
   userFormSchemaDefault
 } from '@/types/schema/userFormSchema';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function EmployeeForm() {
   const { employeeId } = useParams<{ employeeId: string }>();
@@ -39,6 +40,16 @@ export default function EmployeeForm() {
   const { isLoading: isCreating, createUser } = useCreateUser();
   const { isLoading: isFetching, getUserById } = useGetUserById();
   const { isLoading: isUpdating, updateUser } = useUpdateUser();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
 
   const userFormSchema = useMemo(() => {
     return baseUserFormSchema
@@ -210,12 +221,33 @@ export default function EmployeeForm() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Enter your password"
-                        autoComplete="off"
-                        {...field}
-                      />
+                      <div style={{ position: 'relative' }}>
+                        <Input
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Enter your password..."
+                          disabled={isCreating || isUpdating}
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={togglePasswordVisibility}
+                          style={{
+                            position: 'absolute',
+                            right: '10px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {showPassword ? (
+                            <EyeOff size={16} />
+                          ) : (
+                            <Eye size={16} />
+                          )}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -228,12 +260,33 @@ export default function EmployeeForm() {
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Confirm your password"
-                        autoComplete="off"
-                        {...field}
-                      />
+                      <div style={{ position: 'relative' }}>
+                        <Input
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          placeholder="Enter your password..."
+                          disabled={isCreating || isUpdating}
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={toggleConfirmPasswordVisibility}
+                          style={{
+                            position: 'absolute',
+                            right: '10px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff size={16} />
+                          ) : (
+                            <Eye size={16} />
+                          )}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
