@@ -118,7 +118,13 @@ export default function UserAuthForm() {
           />
 
           <Button disabled={loading} className="ml-auto w-full" type="submit">
-            Continue With Email
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-t-2 border-zinc-50"></div>
+              </div>
+            ) : (
+              'Sign in'
+            )}
           </Button>
         </form>
       </Form>
