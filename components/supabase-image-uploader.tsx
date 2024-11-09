@@ -25,6 +25,11 @@ const SupabaseImageUploader = ({
   }
 
   useEffect(() => {
+    initialUrl && setImageUrl(initialUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialUrl]);
+
+  useEffect(() => {
     if (upImageUrl) {
       setImageUrl(upImageUrl);
       if (onUpload) {

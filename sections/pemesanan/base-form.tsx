@@ -159,19 +159,20 @@ export default function OrderForm() {
   };
 
   useEffect(() => {
-    if (isEdit) {
+    if (isEdit && Id && bahan?.data && jenisData) {
       (async () => {
         try {
           const orderData = await getOrderById(Id);
           setFormData(orderData.data);
+          console.debug('orderData', orderData.data);
         } catch (error) {
           toast.error('Error fetching order data');
-          router.push('/dashboard/data/order');
+          // router.push('/dashboard/data/order');
         }
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Id]);
+  }, [Id, bahan, jenisData]);
 
   useEffect(() => {
     if (session?.data?.user?.id) {
@@ -194,7 +195,7 @@ export default function OrderForm() {
     <Card className="mx-auto w-full">
       <CardHeader>
         <CardTitle className="text-left text-2xl font-bold">
-          Tambahkan Pesanan Anda
+          {isEdit ? 'Edit' : 'Tambahkan'} Pesanan Anda
         </CardTitle>
         <CardDescription className="text-left">
           Silahkan atur data pesanan anda.
