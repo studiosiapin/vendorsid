@@ -1,18 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient, Jenis } from '@prisma/client';
 import { BaseAPIResponse } from '@/types/common';
-import { slugify } from '@/lib/utils';
 
 const prisma = new PrismaClient();
 
 // Create a new Jenis
 export async function POST(req: NextRequest) {
   try {
-    const { name, description, imageUrl } = await req.json();
+    const { code, name, description, imageUrl } = await req.json();
 
     const newJenis = await prisma.jenis.create({
       data: {
-        code: slugify(name),
+        code,
         name,
         description,
         imageUrl

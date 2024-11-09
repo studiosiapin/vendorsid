@@ -112,6 +112,7 @@ export default function BahanTable() {
           <TableHeader>
             <TableRow>
               <TableHead>Image</TableHead>
+              <TableHead>Code</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Actions</TableHead>
@@ -128,6 +129,7 @@ export default function BahanTable() {
                     alt={bahan.name}
                   />
                 </TableCell>
+                <TableCell>{bahan.code}</TableCell>
                 <TableCell>{bahan.name}</TableCell>
                 <TableCell>{bahan.description}</TableCell>
                 <TableCell>

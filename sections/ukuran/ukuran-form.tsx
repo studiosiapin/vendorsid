@@ -25,6 +25,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 
 export const ukuranFormSchema = z.object({
+  code: z.string().min(1, 'Code is required'),
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional()
 });
@@ -90,6 +91,20 @@ export default function UkuranForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Code</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter size code" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="name"

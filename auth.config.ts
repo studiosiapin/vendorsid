@@ -50,6 +50,22 @@ const authConfig = {
   ],
   pages: {
     signIn: '/' //sigin page
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id; // Menambah id ke token
+        token.role = user.role; // Menambah role ke token
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string; // Menentukan id di sesi
+        session.user.role = token.role as string; // Menentukan role di sesi
+      }
+      return session;
+    }
   }
 } satisfies NextAuthConfig;
 

@@ -8,11 +8,11 @@ const prisma = new PrismaClient();
 // Create a new Bahan
 export async function POST(req: NextRequest) {
   try {
-    const { name, description, imageUrl } = await req.json();
+    const { code, name, description, imageUrl } = await req.json();
 
     const newBahan = await prisma.bahan.create({
       data: {
-        code: slugify(name),
+        code,
         name,
         description,
         imageUrl

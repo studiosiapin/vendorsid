@@ -110,6 +110,7 @@ export default function UkuranTable() {
         <Table className="rounded border-2">
           <TableHeader>
             <TableRow>
+              <TableHead>Code</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Actions</TableHead>
@@ -118,6 +119,7 @@ export default function UkuranTable() {
           <TableBody>
             {data.map((ukuran) => (
               <TableRow key={ukuran.id}>
+                <TableCell>{ukuran.code}</TableCell>
                 <TableCell>{ukuran.name}</TableCell>
                 <TableCell>{ukuran.description}</TableCell>
                 <TableCell>

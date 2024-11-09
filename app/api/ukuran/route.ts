@@ -1,18 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient, Ukuran } from '@prisma/client';
 import { BaseAPIResponse } from '@/types/common';
-import { slugify } from '@/lib/utils';
 
 const prisma = new PrismaClient();
 
 // Create a new Ukuran
 export async function POST(req: NextRequest) {
   try {
-    const { name, description } = await req.json();
+    const { code, name, description } = await req.json();
 
     const newUkuran = await prisma.ukuran.create({
       data: {
-        code: slugify(name),
+        code,
         name,
         description
       }

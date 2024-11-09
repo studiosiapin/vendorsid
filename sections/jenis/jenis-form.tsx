@@ -29,6 +29,9 @@ import { CircleX } from 'lucide-react';
 import Image from 'next/image';
 
 const formSchema = z.object({
+  code: z.string().min(2, {
+    message: 'Code must be at least 2 characters.'
+  }),
   image: z.any().optional(),
   name: z.string().min(2, {
     message: 'Name must be at least 2 characters.'
@@ -160,6 +163,20 @@ export default function JenisForm() {
               )}
             />
             <div className="flex flex-col gap-5">
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Code</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter code" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="name"

@@ -12,10 +12,10 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { startTransition, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import GithubSignInButton from './github-auth-button';
+// import GithubSignInButton from './github-auth-button';
 import { Eye, EyeOff } from 'lucide-react';
 
 const formSchema = z.object({
@@ -28,7 +28,9 @@ type UserFormValue = z.infer<typeof formSchema>;
 export default function UserAuthForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
-  const [loading, startTransition] = useTransition();
+  const error = searchParams.get('error');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const defaultValues = {
     email: '',
     password: ''
@@ -46,6 +48,7 @@ export default function UserAuthForm() {
   };
 
   const onSubmit = async (data: UserFormValue) => {
+    setIsLoading(true);
     startTransition(() => {
       signIn('credentials', {
         email: data.email,
@@ -53,7 +56,14 @@ export default function UserAuthForm() {
         callbackUrl: callbackUrl ?? '/dashboard'
       });
     });
+    setIsLoading(false);
   };
+
+  useEffect(() => {
+    if (error === 'CredentialsSignin') {
+      setErrorMessage('Email or password is incorrect');
+    }
+  }, [error]);
 
   return (
     <>
@@ -72,7 +82,7 @@ export default function UserAuthForm() {
                   <Input
                     type="email"
                     placeholder="Enter your email..."
-                    disabled={loading}
+                    disabled={isLoading}
                     {...field}
                   />
                 </FormControl>
@@ -92,7 +102,7 @@ export default function UserAuthForm() {
                     <Input
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password..."
-                      disabled={loading}
+                      disabled={isLoading}
                       {...field}
                     />
                     <button
@@ -117,8 +127,12 @@ export default function UserAuthForm() {
             )}
           />
 
-          <Button disabled={loading} className="ml-auto w-full" type="submit">
-            {loading ? (
+          {errorMessage && (
+            <p className="text-center text-sm text-red-500">{errorMessage}</p>
+          )}
+
+          <Button disabled={isLoading} className="ml-auto w-full" type="submit">
+            {isLoading ? (
               <div className="flex items-center justify-center">
                 <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-t-2 border-zinc-50"></div>
               </div>

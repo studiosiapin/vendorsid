@@ -37,6 +37,9 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 const formSchema = z.object({
+  code: z.string().min(1, {
+    message: 'Code is required'
+  }),
   image: z.any().optional(),
   name: z.string().min(2, {
     message: 'Product name must be at least 2 characters.'
@@ -172,6 +175,19 @@ export default function BahanForm() {
             />
 
             <div className="flex flex-col gap-3">
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Code Bahan</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Masukkan code bahan" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="name"
