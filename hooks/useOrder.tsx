@@ -126,3 +126,80 @@ export function useUpdateOrder() {
     updateOrder
   };
 }
+
+// update order status
+export function useUpdateOrderStatus() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const updateOrderStatus = async (
+    orderId: string,
+    status: string,
+    linkProgress: string | null,
+    createdBy: string | null
+  ) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/order/status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: orderId,
+          status: status,
+          linkProgress,
+          createdBy
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
+      }
+
+      // toast.success(data.message);
+      return data; // Return the updated order object returned from API
+    } catch (error) {
+      // toast.error('Error updating order status');
+      throw error; // Propagate the error to the caller
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    isLoading,
+    updateOrderStatus
+  };
+}
+
+// Get Order Progress by ID
+export function useOrderProgress() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getOrderProgress = async (orderId: string) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/order/${orderId}/tracking`);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
+      }
+
+      return data; // Return the order progress object returned from API
+    } catch (error) {
+      // toast.error('Error fetching order progress');
+      throw error; // Propagate the error to the caller
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    isLoading,
+    getOrderProgress
+  };
+}

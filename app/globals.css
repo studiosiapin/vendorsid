@@ -78,3 +78,8 @@
     height: 100dvh;
   }
 }
+
+.noscrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}

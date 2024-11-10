@@ -41,7 +41,13 @@ export async function GET(
             id: true,
             orderId: true,
             quantity: true,
-            ukuranId: true
+            ukuranId: true,
+            ukuran: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
           }
         }
         // Add any other fields that you want to return

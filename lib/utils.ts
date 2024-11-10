@@ -53,3 +53,37 @@ export function slugify(text: string): string {
     .replace(/ /g, '-')
     .replace(/[^\w-]+/g, '');
 }
+
+// YYYY-MM-DD to 10 June, 2022
+export function formatDate(date: string | Date | null): string {
+  if (!date) {
+    return '';
+  }
+  return new Date(date).toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+}
+
+// 2024-11-10T16:24:13.747Z to 10 November 2024 - 16:24
+export function formatDateTime(date: string | Date | null): string {
+  if (!date) {
+    return '';
+  }
+  const formattedDate = new Date(date).toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+
+  // Mengambil waktu dalam format "16:24"
+  const formattedTime = new Date(date).toLocaleTimeString('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'UTC',
+    hour12: false // Memastikan 24-hour format
+  });
+
+  return `${formattedDate} - ${formattedTime}`;
+}
