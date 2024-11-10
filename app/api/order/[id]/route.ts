@@ -78,7 +78,7 @@ export async function GET(
     return NextResponse.json(response);
   } catch (error) {
     const response: BaseAPIResponse = {
-      message: 'Error fetching order',
+      message: `Error fetching order ${error}`,
       code: 500
     };
     return NextResponse.json(response, { status: 500 });
