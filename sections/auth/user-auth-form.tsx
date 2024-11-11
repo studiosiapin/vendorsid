@@ -48,7 +48,6 @@ export default function UserAuthForm() {
   };
 
   const onSubmit = async (data: UserFormValue) => {
-    setIsLoading(true);
     startTransition(() => {
       signIn('credentials', {
         email: data.email,
@@ -69,7 +68,10 @@ export default function UserAuthForm() {
     <>
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit((data) => {
+            setIsLoading(true);
+            onSubmit(data);
+          })}
           className="w-full space-y-2"
         >
           <FormField

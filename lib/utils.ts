@@ -87,3 +87,11 @@ export function formatDateTime(date: string | Date | null): string {
 
   return `${formattedDate} - ${formattedTime}`;
 }
+
+// format Rupiah
+export function formatRupiah(amount: number): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR'
+  }).format(amount);
+}

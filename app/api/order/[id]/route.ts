@@ -49,6 +49,12 @@ export async function GET(
               }
             }
           }
+        },
+        user: {
+          select: {
+            id: true,
+            name: true
+          }
         }
         // Add any other fields that you want to return
       }

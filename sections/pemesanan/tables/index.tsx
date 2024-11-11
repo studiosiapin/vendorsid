@@ -17,6 +17,7 @@ import { CircleX } from 'lucide-react';
 import { Order } from '@prisma/client';
 import { OrderCellAction } from './cell-action'; // Import the cell action component for Order
 import TableSkeleton from '@/components/skeleton/TableSkeleton';
+import BadgeStatus from '@/components/badge-status';
 
 export default function PemesananTable() {
   const [data, setData] = useState<Order[]>([]);
@@ -122,7 +123,9 @@ export default function PemesananTable() {
               <TableRow key={order.id}>
                 <TableCell>{order.invoiceId}</TableCell>
                 <TableCell>{order.title}</TableCell>
-                <TableCell>{order.status}</TableCell>
+                <TableCell>
+                  <BadgeStatus status={order.status} />
+                </TableCell>
                 <TableCell>
                   {new Date(order.createdAt).toLocaleDateString()}
                 </TableCell>
