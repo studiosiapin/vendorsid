@@ -93,20 +93,53 @@ export async function POST(req: NextRequest) {
 }
 
 // Get all Orders
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, res: NextResponse) {
   try {
-    const orders = await prisma.order.findMany();
+    // Mendapatkan query parameters dari request
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get('userId');
+    const limit = parseInt(searchParams.get('limit') || '10', 10); // default limit to 10 if not provided
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId || undefined
+      }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const orders = await prisma.order.findMany({
+      where: {
+        createdBy:
+          user && user.role === 'reseller' ? userId || undefined : undefined,
+        ...(user && user.role === 'desain_setting'
+          ? { status: 'DESAIN_SETTING' }
+          : {}),
+        ...(user?.role === 'printing' ? { status: 'PRINTING' } : {}),
+        ...(user?.role === 'pressing' ? { status: 'PRESSING' } : {}),
+        ...(user?.role === 'sewing' ? { status: 'SEWING' } : {}),
+        ...(user?.role === 'packing' ? { status: 'PACKING' } : {})
+      },
+      take: limit, // Menggunakan limit yang ditentukan
+      include: {
+        user: true
+      }
+    });
+
     const response: BaseAPIResponse<Order[]> = {
       message: 'Orders fetched successfully',
       code: 200,
       data: orders
     };
+
     return NextResponse.json(response);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(error); // Log the error for debugging
     return NextResponse.json(
-      { error: 'Error fetching orders' },
+      { error: 'Error fetching orders', detail: error },
       { status: 500 }
     );
   }

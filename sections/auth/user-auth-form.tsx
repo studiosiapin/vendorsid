@@ -48,14 +48,16 @@ export default function UserAuthForm() {
   };
 
   const onSubmit = async (data: UserFormValue) => {
+    setIsLoading(true); // Set loading true sebelum memulai proses login
     startTransition(() => {
       signIn('credentials', {
         email: data.email,
         password: data.password,
         callbackUrl: callbackUrl ?? '/dashboard'
+      }).then(() => {
+        setIsLoading(false); // Set loading false setelah proses login selesai
       });
     });
-    setIsLoading(false);
   };
 
   useEffect(() => {

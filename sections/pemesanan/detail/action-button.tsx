@@ -43,6 +43,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
   const [isPressing, setIsPressing] = useState<boolean>(false);
   const [isSewing, setIsSewing] = useState<boolean>(false);
   const [isPacking, setIsPacking] = useState<boolean>(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
   const [settlementAmount, setSettlementAmount] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
   const remainingPayment = order.totalAmount - order.dpAmount;
@@ -140,6 +141,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
     if (session) {
       switch (session.data?.user.role) {
         case 'super_admin':
+          setIsSuperAdmin(true);
           setIsAdmin(true);
           break;
         case 'admin':
@@ -381,49 +383,55 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
                 <SelectContent className="z-[101]">
                   <SelectItem
                     value="PROOFING"
-                    disabled={order.status !== 'APPROVED'}
+                    disabled={order.status !== 'APPROVED' && !isSuperAdmin}
                   >
                     PROOFING
                   </SelectItem>
                   <SelectItem
                     value="DESAIN_SETTING"
-                    disabled={order.status !== 'PROOFING_APPROVED'}
+                    disabled={
+                      order.status !== 'PROOFING_APPROVED' && !isSuperAdmin
+                    }
                   >
                     DESAIN SETTING
                   </SelectItem>
                   <SelectItem
                     value="PRINTING"
-                    disabled={order.status !== 'DESAIN_SETTING'}
+                    disabled={
+                      order.status !== 'DESAIN_SETTING' && !isSuperAdmin
+                    }
                   >
                     PRINTING
                   </SelectItem>
                   <SelectItem
                     value="PRESSING"
-                    disabled={order.status !== 'PRINTING'}
+                    disabled={order.status !== 'PRINTING' && !isSuperAdmin}
                   >
                     PRESSING
                   </SelectItem>
                   <SelectItem
                     value="SEWING"
-                    disabled={order.status !== 'PRESSING'}
+                    disabled={order.status !== 'PRESSING' && !isSuperAdmin}
                   >
                     SEWING
                   </SelectItem>
                   <SelectItem
                     value="PACKING"
-                    disabled={order.status !== 'SEWING'}
+                    disabled={order.status !== 'SEWING' && !isSuperAdmin}
                   >
                     PACKING
                   </SelectItem>
                   <SelectItem
                     value="WAITING_SETTLEMENT"
-                    disabled={order.status !== 'PACKING'}
+                    disabled={order.status !== 'PACKING' && !isSuperAdmin}
                   >
                     WAITING SETTLEMENT
                   </SelectItem>
                   <SelectItem
                     value="COMPLETED"
-                    disabled={order.status !== 'WAITING_SETTLEMENT'}
+                    disabled={
+                      order.status !== 'WAITING_SETTLEMENT' && !isSuperAdmin
+                    }
                   >
                     COMPLETED
                   </SelectItem>
@@ -438,24 +446,32 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
                 onChange={(e) => setLinkProgress(e.target.value)}
               />
 
-              <div className="grid grid-cols-[1fr_150px] gap-2 text-right">
-                <div>Total Pembayaran :</div>
-                <div>{formatRupiah(order.totalAmount)}</div>
-                <div>DP :</div>
-                <div>{formatRupiah(order.dpAmount)}</div>
-                <div>Sisa Pembayaran :</div>
-                <div className="font-bold">
-                  {formatRupiah(remainingPayment)}
-                </div>
-              </div>
+              {order.status === 'WAITING_SETTLEMENT' && (
+                <>
+                  <div className="grid grid-cols-[1fr_150px] gap-2 text-right">
+                    <div>Total Pembayaran :</div>
+                    <div>{formatRupiah(order.totalAmount)}</div>
+                    <div>DP :</div>
+                    <div>{formatRupiah(order.dpAmount)}</div>
+                    <div>Sisa Pembayaran :</div>
+                    <div className="font-bold">
+                      {formatRupiah(remainingPayment)}
+                    </div>
+                  </div>
 
-              <p>Nominal Pelunasan</p>
-              <Input
-                type="number"
-                value={settlementAmount}
-                onChange={(e) => setSettlementAmount(Number(e.target.value))}
-              />
-              {errorMsg && <p className="text-sm text-red-500">{errorMsg}</p>}
+                  <p>Nominal Pelunasan</p>
+                  <Input
+                    type="number"
+                    value={settlementAmount}
+                    onChange={(e) =>
+                      setSettlementAmount(Number(e.target.value))
+                    }
+                  />
+                  {errorMsg && (
+                    <p className="text-sm text-red-500">{errorMsg}</p>
+                  )}
+                </>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3">

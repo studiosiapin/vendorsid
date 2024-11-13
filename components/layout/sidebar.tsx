@@ -1,9 +1,10 @@
 'use client';
 import { DashboardNav } from '@/components/dashboard-nav';
-import { navItems } from '@/constants/data';
+import { navItems, workerNavItems } from '@/constants/data';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
 import { ChevronLeft } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 type SidebarProps = {
@@ -12,6 +13,10 @@ type SidebarProps = {
 
 export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
+  const session = useSession();
+  const isAdmin =
+    session.data?.user.role === 'admin' ||
+    session.data?.user.role === 'superadmin';
 
   const handleToggle = () => {
     toggle();
@@ -54,7 +59,7 @@ export default function Sidebar({ className }: SidebarProps) {
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <div className="mt-3 space-y-1">
-            <DashboardNav items={navItems} />
+            <DashboardNav items={isAdmin ? navItems : workerNavItems} />
           </div>
         </div>
       </div>

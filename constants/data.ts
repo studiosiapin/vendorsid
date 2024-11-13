@@ -200,12 +200,6 @@ export const navItems: NavItem[] = [
     icon: 'billing',
     label: 'pemesanan'
   },
-  // {
-  //   title: 'Produksi',
-  //   href: '/dashboard/product',
-  //   icon: 'product',
-  //   label: 'produksi'
-  // },
   {
     title: 'Pengaturan',
     icon: 'settings',
@@ -255,6 +249,40 @@ export const navItems: NavItem[] = [
         label: 'pembelajaran'
       }
     ]
+  },
+  {
+    title: 'Referensi',
+    icon: 'help',
+    label: 'referensi',
+    children: [
+      {
+        title: 'Desainer',
+        href: '/dashboard/data/desainer',
+        icon: 'chevronRight',
+        label: 'desainer'
+      },
+      {
+        title: 'Pembelajaran',
+        href: '/dashboard/data/pembelajaran',
+        icon: 'chevronRight',
+        label: 'pembelajaran'
+      }
+    ]
+  }
+];
+
+export const workerNavItems: NavItem[] = [
+  {
+    title: 'Overview',
+    href: '/dashboard',
+    icon: 'dashboard',
+    label: 'overview'
+  },
+  {
+    title: 'Pemesanan',
+    href: '/dashboard/pemesanan',
+    icon: 'billing',
+    label: 'pemesanan'
   },
   {
     title: 'Referensi',

@@ -18,14 +18,17 @@ import { Order } from '@prisma/client';
 import { OrderCellAction } from './cell-action'; // Import the cell action component for Order
 import TableSkeleton from '@/components/skeleton/TableSkeleton';
 import BadgeStatus from '@/components/badge-status';
+import { useSession } from 'next-auth/react';
 
 export default function PemesananTable() {
+  const session = useSession();
   const [data, setData] = useState<Order[]>([]);
   const [totalData, setTotalData] = useState(0);
   const [pagination, setPagination] = useState<Pagination>();
   const [searchQuery, setSearchQuery] = useState<string>(''); // Stored search query
   const [page, setPage] = useState<number>(1); // Current page number
   const [limit, setLimit] = useState<number>(10); // Number of items per page
+  const userId = session.data?.user.id; // Use the logged in user ID here
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Ref to hold the timeout
   const [isLoading, setIsLoading] = useState(true);
 
@@ -45,6 +48,8 @@ export default function PemesananTable() {
       const response = await fetch(
         `/api/order?searchQuery=${encodeURIComponent(
           searchQuery
+        )}&userId=${encodeURIComponent(
+          userId || ''
         )}&page=${page}&limit=${limit}`
       );
       const result = await response.json();

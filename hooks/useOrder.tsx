@@ -26,6 +26,43 @@ export interface orderFormDataType {
   orderDetails: OrderDetail[];
 }
 
+export function useGetAllOrders() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [orders, setOrders] = useState<orderFormDataType[]>();
+  const [error, setError] = useState<string | null>(null);
+
+  const getAllOrders = async () => {
+    setIsLoading(true);
+    setError(null); // Reset any previous errors
+
+    try {
+      const response = await fetch('/api/order');
+
+      const data: orderFormDataType[] = await response.json();
+
+      if (!response.ok) {
+        throw new Error('Something went wrong');
+      }
+
+      setOrders(data);
+      return data; // Returning the fetched data
+    } catch (error) {
+      setError('Error fetching orders');
+      // toast.error('Error fetching orders');
+      throw error; // Propagate the error
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    isLoading,
+    orders,
+    error,
+    getAllOrders
+  };
+}
+
 export function useCreateOrder() {
   const [isLoading, setIsLoading] = useState(false);
 
