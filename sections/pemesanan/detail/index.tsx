@@ -27,6 +27,7 @@ import TableSkeleton from '@/components/skeleton/TableSkeleton';
 import BadgeStatus from '@/components/badge-status';
 import ActionButtons from './action-button';
 import DetailPesananSkeleton from '@/components/skeleton/DetailPesananSkeleton';
+import { Button } from '@/components/ui/button';
 
 const DetailPageOrder = () => {
   const { Id } = useParams<{ Id: string }>();
@@ -50,6 +51,7 @@ const DetailPageOrder = () => {
   const [progress, setProgress] = useState<OrderProgressResponse[] | null>(
     null
   );
+  const isReseller = session?.data?.user.role === 'reseller';
 
   const fetchAllData = async () => {
     try {
@@ -76,13 +78,22 @@ const DetailPageOrder = () => {
   return (
     <div className="p-6">
       <Card className="mx-auto w-full bg-white">
-        <CardHeader>
+        <CardHeader className="relative">
           <CardTitle className="text-left text-2xl font-bold">
             Detail Pemesanan
           </CardTitle>
           <CardDescription className="text-left">
             Silahkan atur data pesanan anda.
           </CardDescription>
+
+          {!isReseller && (
+            <div className="absolute right-6 top-4">
+              {/* Cetak SPK (Surat Pengantar Kerja) */}
+              <Link href={`/spk/${Id}`}>
+                <Button>Cetak SPK</Button>
+              </Link>
+            </div>
+          )}
         </CardHeader>
         <CardContent className="noscrollbar h-[78vh] overflow-auto">
           {order && session && (
