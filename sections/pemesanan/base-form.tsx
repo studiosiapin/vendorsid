@@ -242,7 +242,7 @@ export default function OrderForm() {
                 placeholder="Description"
               />
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-3 max-md:grid-cols-1">
                 <SupabaseImageUploader
                   name="Link Mockup"
                   initialUrl={formData.linkMockup}

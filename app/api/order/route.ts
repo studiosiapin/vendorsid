@@ -115,12 +115,12 @@ export async function GET(req: NextRequest, res: NextResponse) {
         createdBy:
           user && user.role === 'reseller' ? userId || undefined : undefined,
         ...(user && user.role === 'desain_setting'
-          ? { status: 'DESAIN_SETTING' }
+          ? { status: 'PROOFING_APPROVED' }
           : {}),
-        ...(user?.role === 'printing' ? { status: 'PRINTING' } : {}),
-        ...(user?.role === 'pressing' ? { status: 'PRESSING' } : {}),
-        ...(user?.role === 'sewing' ? { status: 'SEWING' } : {}),
-        ...(user?.role === 'packing' ? { status: 'PACKING' } : {})
+        ...(user?.role === 'printing' ? { status: 'DESAIN_SETTING' } : {}),
+        ...(user?.role === 'pressing' ? { status: 'PRINTING' } : {}),
+        ...(user?.role === 'sewing' ? { status: 'PRESSING' } : {}),
+        ...(user?.role === 'packing' ? { status: 'SEWING' } : {})
       },
       take: limit, // Menggunakan limit yang ditentukan
       include: {

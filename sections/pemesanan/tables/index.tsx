@@ -127,7 +127,9 @@ export default function PemesananTable() {
             {data.map((order) => (
               <TableRow key={order.id}>
                 <TableCell>{order.invoiceId}</TableCell>
-                <TableCell>{order.title}</TableCell>
+                <TableCell>
+                  <div className="min-w-max">{order.title}</div>
+                </TableCell>
                 <TableCell>
                   <BadgeStatus status={order.status} />
                 </TableCell>

@@ -76,7 +76,7 @@ const DetailPageOrder = () => {
     return <DetailPesananSkeleton />;
 
   return (
-    <div className="p-6">
+    <div className="p-6 max-md:p-1">
       <Card className="mx-auto w-full bg-white">
         <CardHeader className="relative">
           <CardTitle className="text-left text-2xl font-bold">
@@ -97,7 +97,7 @@ const DetailPageOrder = () => {
         </CardHeader>
         <CardContent className="noscrollbar h-[78vh] overflow-auto">
           {order && session && (
-            <div className="grid grid-cols-[300px_1fr] gap-7">
+            <div className="grid grid-cols-[300px_1fr] gap-7 max-md:flex max-md:flex-col-reverse">
               <div className="">
                 <div className="grid grid-cols-1 gap-5">
                   <div className="flex flex-col gap-3">
@@ -256,9 +256,13 @@ const DetailPageOrder = () => {
                                 status={item.status as OrderStatus}
                               />
                             </TableCell>
-                            <TableCell>{item.user.name}</TableCell>
                             <TableCell>
-                              {formatDateTime(item.createdAt)}
+                              <div className="w-max">{item.user.name}</div>
+                            </TableCell>
+                            <TableCell>
+                              <p className="min-w-max">
+                                {formatDateTime(item.createdAt)}
+                              </p>
                             </TableCell>
                             <TableCell>
                               {item.linkProgress && (

@@ -46,9 +46,9 @@ const statusTooltips: Record<OrderStatus, string> = {
 
 const BadgeStatus = ({ status, size = 'medium' }: BadgeStatusProps) => {
   const sizeClasses = {
-    small: 'px-2 py-0.5 text-xs',
-    medium: 'px-3 py-1 text-sm',
-    large: 'px-4 py-1.5 text-lg'
+    small: 'px-2 py-0.5 text-xs max-md:text-sm max-md:px-2',
+    medium: 'px-3 py-1 text-sm max-md:text-sm max-md:px-2 max-md:py-0.5',
+    large: 'px-4 py-1.5 text-lg max-md:text-sm max-md:px-2 max-md:py-0.5'
   };
 
   return (

@@ -356,10 +356,10 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
             className="fixed left-0 top-0 z-[99] h-screen w-screen bg-black/80"
             onClick={() => closeModal()}
           ></div>
-          <div className="fixed left-[50%] top-[50%] z-[100] w-full max-w-screen-sm translate-x-[-50%] translate-y-[-50%] rounded-md bg-white p-5">
+          <div className="fixed left-[50%] top-[50%] z-[100] w-full max-w-screen-sm translate-x-[-50%] translate-y-[-50%] rounded-md bg-white p-5 max-md:w-[90%]">
             <div className="relative text-2xl font-semibold">
               Update Progress Pesanan
-              <div className="absolute -right-12 -top-12 aspect-square cursor-pointer rounded-full bg-white p-1">
+              <div className="absolute -right-12 -top-12 aspect-square cursor-pointer rounded-full bg-white p-1 max-md:-right-10">
                 <CircleX
                   className="text-red-500"
                   width={20}
