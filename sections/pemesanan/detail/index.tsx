@@ -89,7 +89,7 @@ const DetailPageOrder = () => {
           {!isReseller && (
             <div className="absolute right-6 top-4">
               {/* Cetak SPK (Surat Pengantar Kerja) */}
-              <Link href={`/spk/${Id}`}>
+              <Link href={`/spk/${Id}`} target="_blank">
                 <Button>Cetak SPK</Button>
               </Link>
             </div>

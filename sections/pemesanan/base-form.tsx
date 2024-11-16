@@ -80,10 +80,18 @@ export default function OrderForm() {
   const validateStep1 = () => {
     const newErrors: Partial<Record<keyof orderFormDataType, string>> = {};
     if (!formData.title) newErrors.title = 'Title is required';
+    if (!formData.linkMockup) newErrors.linkMockup = 'Foto Mockup is required';
+    if (!formData.linkCollar) newErrors.linkCollar = 'Foto Collar is required';
+    if (!formData.linkLayout) newErrors.linkLayout = 'Foto Layout is required';
+    if (!formData.linkSharedrive)
+      newErrors.linkSharedrive = 'Link Sharedrive is required';
+    if (!formData.startAt) newErrors.startAt = 'Start At is required';
+    if (!formData.finishAt) newErrors.finishAt = 'Finish At is required';
     if (!formData.totalAmount)
       newErrors.totalAmount = 'Total Amount is required';
     if (!formData.dpAmount) newErrors.dpAmount = 'DP Amount is required';
     if (!formData.bahanCode) newErrors.bahanCode = 'Bahan is required';
+    if (!formData.jenisCode) newErrors.jenisCode = 'Jenis is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -135,10 +143,17 @@ export default function OrderForm() {
     e.preventDefault();
     if (!validateStep2()) return;
 
+    const totalAmountParse = parseInt(
+      formData.totalAmount.toString().replace(/\D/g, '')
+    );
+    const dpAmountParse = parseInt(
+      formData.dpAmount.toString().replace(/\D/g, '')
+    );
+
     const payload = {
       ...formData,
-      totalAmount: Number(formData.totalAmount),
-      dpAmount: Number(formData.dpAmount),
+      totalAmount: Number(totalAmountParse),
+      dpAmount: Number(dpAmountParse),
       startAt: new Date(formData.startAt).toISOString(),
       finishAt: new Date(formData.finishAt).toISOString()
     };
@@ -243,19 +258,22 @@ export default function OrderForm() {
 
               <div className="grid grid-cols-3 gap-3 max-md:grid-cols-1">
                 <SupabaseImageUploader
-                  name="Link Mockup"
+                  name="Foto Mockup"
                   initialUrl={formData.linkMockup}
                   onUpload={(url) => handleImageUploaded(url, 'linkMockup')}
+                  errMessage={errors.linkMockup}
                 />
                 <SupabaseImageUploader
-                  name="Link Collar"
+                  name="Foto Collar"
                   initialUrl={formData.linkCollar}
                   onUpload={(url) => handleImageUploaded(url, 'linkCollar')}
+                  errMessage={errors.linkCollar}
                 />
                 <SupabaseImageUploader
-                  name="Link Layout"
+                  name="Foto Layout"
                   initialUrl={formData.linkLayout}
                   onUpload={(url) => handleImageUploaded(url, 'linkLayout')}
+                  errMessage={errors.linkLayout}
                 />
               </div>
 
@@ -266,6 +284,9 @@ export default function OrderForm() {
                 onChange={handleChange}
                 placeholder="Link Sharedrive"
               />
+              {errors.linkSharedrive && (
+                <p className="text-sm text-red-500">{errors.linkSharedrive}</p>
+              )}
               <div className="grid grid-cols-2 gap-5">
                 <div className="flex flex-col gap-3">
                   <p>Mulai Pesanan</p>
@@ -276,6 +297,9 @@ export default function OrderForm() {
                     placeholder="Start At"
                     type="date"
                   />
+                  {errors.startAt && (
+                    <p className="text-sm text-red-500">{errors.startAt}</p>
+                  )}
                 </div>
                 <div className="flex flex-col gap-3">
                   <p>Selesai Pesanan</p>
@@ -286,6 +310,9 @@ export default function OrderForm() {
                     placeholder="Finish At"
                     type="date"
                   />
+                  {errors.finishAt && (
+                    <p className="text-sm text-red-500">{errors.finishAt}</p>
+                  )}
                 </div>
                 <div className="flex flex-col gap-3">
                   <p>Total Pesanan</p>

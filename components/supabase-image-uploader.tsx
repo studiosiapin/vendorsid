@@ -10,12 +10,14 @@ interface SupabaseImageUploaderProps {
   name?: string;
   initialUrl?: string;
   onUpload?: (imageUrl: string) => void;
+  errMessage?: string;
 }
 
 const SupabaseImageUploader = ({
   name,
   initialUrl,
-  onUpload
+  onUpload,
+  errMessage
 }: SupabaseImageUploaderProps) => {
   const { imageUrl: upImageUrl, isUploading, uploadImage } = useUploadImage();
   const [imageUrl, setImageUrl] = useState<string | null>(initialUrl || null);
@@ -68,6 +70,7 @@ const SupabaseImageUploader = ({
         disabled={isUploading}
         className={imageUrl ? 'hidden' : ''}
       />
+      {errMessage && <p className="mt-2 text-sm text-red-500">{errMessage}</p>}
     </div>
   );
 };
