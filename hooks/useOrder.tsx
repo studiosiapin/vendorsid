@@ -240,3 +240,49 @@ export function useOrderProgress() {
     getOrderProgress
   };
 }
+
+// Complete Order
+export function useCompleteOrder() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const completeOrder = async (
+    orderId: string,
+    linkProgress: string,
+    userId: string,
+    settlementAmount: number
+  ) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/order/${orderId}/complete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          linkProgress,
+          userId,
+          settlementAmount
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
+      }
+
+      // toast.success(data.message);
+      return data; // Return the updated order object returned from API
+    } catch (error) {
+      // toast.error('Error completing order');
+      throw error; // Propagate the error to the caller
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    isLoading,
+    completeOrder
+  };
+}

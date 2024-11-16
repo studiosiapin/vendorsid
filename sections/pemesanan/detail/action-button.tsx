@@ -1,3 +1,4 @@
+import CurrencyInput from '@/components/currency-input';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -7,7 +8,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { useUpdateOrder, useUpdateOrderStatus } from '@/hooks/useOrder';
+import {
+  useCompleteOrder,
+  useUpdateOrder,
+  useUpdateOrderStatus
+} from '@/hooks/useOrder';
 import { formatRupiah } from '@/lib/utils';
 import { Order, OrderStatus } from '@prisma/client';
 import { CircleX } from 'lucide-react';
@@ -44,12 +49,13 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
   const [isSewing, setIsSewing] = useState<boolean>(false);
   const [isPacking, setIsPacking] = useState<boolean>(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
-  const [settlementAmount, setSettlementAmount] = useState(0);
+  const [settlementAmount, setSettlementAmount] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const remainingPayment = order.totalAmount - order.dpAmount;
 
   const { isLoading: isUpdating, updateOrderStatus } = useUpdateOrderStatus();
-  const { isLoading: isUpdatingOrder, updateOrder } = useUpdateOrder();
+  const { updateOrder } = useUpdateOrder();
+  const { isLoading: isCompleting, completeOrder } = useCompleteOrder();
 
   const handleUpdateOrderStatus = async (
     status: OrderStatus,
@@ -78,48 +84,37 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
   };
 
   const handleFinishOrder = async () => {
-    if (settlementAmount === 0) {
+    const settlementAmountParse = parseInt(settlementAmount.replace(/\D/g, ''));
+    if (!settlementAmount) {
+      setErrorMsg('Mohon isi jumlah pembayaran');
+      return;
+    }
+
+    if (settlementAmountParse === 0 || isNaN(settlementAmountParse)) {
       setErrorMsg('Nominal pelunasan harus diisi');
       return;
     }
-    if (settlementAmount < remainingPayment) {
+    if (settlementAmountParse < remainingPayment) {
       setErrorMsg('Nominal pelunasan tidak boleh kurang dari sisa pembayaran');
       return;
     }
-    if (settlementAmount > remainingPayment) {
+    if (settlementAmountParse > remainingPayment) {
       setErrorMsg('Nominal pelunasan tidak boleh lebih dari sisa pembayaran');
       return;
     }
+    if (!session.data) return;
 
     // modal konfirmasi
     const conf = confirm(`Apakah anda yakin ingin menyelesaikan pesanan ini?`);
     if (!conf) return;
     if (order) {
       try {
-        await updateOrderStatus(
+        await completeOrder(
           order.id,
-          'COMPLETED',
           linkProgress,
-          session.data?.user.id || null
+          session.data?.user.id,
+          settlementAmountParse
         );
-        await updateOrder(order.id, {
-          settlementAmount: settlementAmount,
-          invoiceId: '',
-          title: '',
-          description: '',
-          linkMockup: '',
-          linkCollar: '',
-          linkLayout: '',
-          linkSharedrive: '',
-          startAt: '',
-          finishAt: '',
-          totalAmount: 0,
-          dpAmount: 0,
-          bahanCode: '',
-          jenisCode: '',
-          createdBy: '',
-          orderDetails: []
-        });
 
         closeModal();
       } catch (error) {
@@ -460,12 +455,10 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
                   </div>
 
                   <p>Nominal Pelunasan</p>
-                  <Input
-                    type="number"
-                    value={settlementAmount}
-                    onChange={(e) =>
-                      setSettlementAmount(Number(e.target.value))
-                    }
+                  <CurrencyInput
+                    name="settlementAmount"
+                    value={settlementAmount.toString()}
+                    onChange={(e) => setSettlementAmount(e.target.value)}
                   />
                   {errorMsg && (
                     <p className="text-sm text-red-500">{errorMsg}</p>

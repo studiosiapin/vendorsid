@@ -3,7 +3,7 @@ import React from 'react';
 const DetailPesananSkeleton = () => {
   return (
     <div className="animate-pulse p-6">
-      <div className="grid grid-cols-[300px_1fr] gap-7">
+      <div className="grid grid-cols-[300px_1fr] gap-7 max-md:grid-cols-1">
         <div className="flex flex-col gap-3">
           <div className="h-5 w-full bg-zinc-200/80"></div>
           <div className="mb-5 aspect-square w-full bg-zinc-200/80"></div>

@@ -32,7 +32,7 @@ import {
 import { useGetAllJenis } from '@/hooks/useJenis';
 import { useGetAllUkuran } from '@/hooks/useUkuran';
 import { CircleX } from 'lucide-react';
-import { start } from 'node:repl';
+import CurrencyInput from '@/components/currency-input';
 
 export default function OrderForm() {
   const { Id } = useParams<{ Id: string }>();
@@ -164,7 +164,6 @@ export default function OrderForm() {
         try {
           const orderData = await getOrderById(Id);
           setFormData(orderData.data);
-          console.debug('orderData', orderData.data);
         } catch (error) {
           toast.error('Error fetching order data');
           // router.push('/dashboard/data/order');
@@ -290,12 +289,11 @@ export default function OrderForm() {
                 </div>
                 <div className="flex flex-col gap-3">
                   <p>Total Pesanan</p>
-                  <Input
+                  <CurrencyInput
                     name="totalAmount"
-                    value={formData.totalAmount}
+                    value={formData.totalAmount.toString()}
                     onChange={handleChange}
-                    placeholder="Total Amount"
-                    type="number"
+                    placeholder="Masukan Total Pesanan"
                   />
                   {errors.totalAmount && (
                     <p className="text-sm text-red-500">{errors.totalAmount}</p>
@@ -303,12 +301,11 @@ export default function OrderForm() {
                 </div>
                 <div className="flex flex-col gap-3">
                   <p>Total DP</p>
-                  <Input
+                  <CurrencyInput
                     name="dpAmount"
-                    value={formData.dpAmount}
+                    value={formData.dpAmount.toString()}
                     onChange={handleChange}
-                    placeholder="DP Amount"
-                    type="number"
+                    placeholder="Masukan Total DP"
                   />
                   {errors.dpAmount && (
                     <p className="text-sm text-red-500">{errors.dpAmount}</p>
@@ -440,7 +437,7 @@ export default function OrderForm() {
                     <div className="">
                       <p>Jumlah</p>
                       <Input
-                        type="number"
+                        type="text"
                         value={orderDetail.quantity}
                         onChange={(e) =>
                           setFormData((prevData) => {
@@ -454,6 +451,11 @@ export default function OrderForm() {
                             };
                           })
                         }
+                        onKeyPress={(e) => {
+                          if (!/[0-9]/.test(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                       />
                       {errors[`orderDetails[${index}].quantity`] && (
                         <span className="text-xs text-red-500">

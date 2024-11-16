@@ -16,7 +16,7 @@ export default function Sidebar({ className }: SidebarProps) {
   const session = useSession();
   const isAdmin =
     session.data?.user.role === 'admin' ||
-    session.data?.user.role === 'superadmin';
+    session.data?.user.role === 'super_admin';
 
   const handleToggle = () => {
     toggle();

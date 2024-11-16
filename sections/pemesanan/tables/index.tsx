@@ -58,6 +58,7 @@ export default function PemesananTable() {
       setTotalData(result.total);
       setIsLoading(false);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error fetching data:', error);
       setIsLoading(false);
     }
@@ -79,6 +80,7 @@ export default function PemesananTable() {
         clearTimeout(debounceTimeoutRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, page, limit]); // Dependencies to fetch data
 
   // Check if any filters are active

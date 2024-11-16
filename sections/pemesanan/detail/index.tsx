@@ -23,7 +23,7 @@ import {
 import { useSession } from 'next-auth/react';
 import { OrderProgressResponse } from '@/app/api/order/[id]/tracking/route';
 import Link from 'next/link';
-import TableSkeleton from '@/components/skeleton/TableSkeleton';
+// import TableSkeleton from '@/components/skeleton/TableSkeleton';
 import BadgeStatus from '@/components/badge-status';
 import ActionButtons from './action-button';
 import DetailPesananSkeleton from '@/components/skeleton/DetailPesananSkeleton';
