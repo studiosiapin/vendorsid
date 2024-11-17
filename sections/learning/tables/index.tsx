@@ -18,7 +18,11 @@ import { Learning } from '@prisma/client';
 import { LearningCellAction } from './cell-action'; // Assuming you have a LearningCellAction component
 import TableSkeleton from '@/components/skeleton/TableSkeleton';
 
-export default function LearningTable() {
+type LearningTableProps = {
+  isReferensi?: boolean;
+};
+
+export default function LearningTable({ isReferensi }: LearningTableProps) {
   const [data, setData] = useState<Learning[]>([]);
   const [totalData, setTotalData] = useState(0);
   const [pagination, setPagination] = useState<Pagination>();
@@ -113,7 +117,7 @@ export default function LearningTable() {
               <TableHead>Name</TableHead>
               <TableHead>Source</TableHead>
               <TableHead>Description</TableHead>
-              <TableHead>Actions</TableHead>
+              {!isReferensi && <TableHead>Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -122,14 +126,16 @@ export default function LearningTable() {
                 <TableCell>{learning.name}</TableCell>
                 <TableCell>{learning.source}</TableCell>
                 <TableCell>{learning.description}</TableCell>
-                <TableCell>
-                  <LearningCellAction
-                    data={learning}
-                    onDeleted={() => {
-                      fetchData(); // Re-fetch data to update the table after deleting
-                    }}
-                  />
-                </TableCell>
+                {!isReferensi && (
+                  <TableCell>
+                    <LearningCellAction
+                      data={learning}
+                      onDeleted={() => {
+                        fetchData(); // Re-fetch data to update the table after deleting
+                      }}
+                    />
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

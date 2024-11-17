@@ -22,7 +22,7 @@ const SPKPage = () => {
   const exportToPDF = async (invoiceId: string) => {
     if (!spkRef.current) return;
 
-    const canvas = await html2canvas(spkRef.current, { scale: 2 });
+    const canvas = await html2canvas(spkRef.current, { scale: 1.5 });
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pdfWidth = pdf.internal.pageSize.getWidth();

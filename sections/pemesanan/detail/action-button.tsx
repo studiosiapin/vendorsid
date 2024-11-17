@@ -232,7 +232,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
       )}
 
       {/* PROOFING STEP */}
-      {order.status === 'PROOFING' && isReseller && (
+      {order.status === 'PROOFING' && (isReseller || isAdmin) && (
         <>
           <Button
             disabled={isUpdating}

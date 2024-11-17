@@ -7,9 +7,13 @@ import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import DesainerTable from '../tables';
 
-type DesainerListingPage = {};
+type LearningListingPage = {
+  isReferensi?: boolean;
+};
 
-export default async function ListingPage({}: DesainerListingPage) {
+export default async function ListingPage({
+  isReferensi
+}: LearningListingPage) {
   return (
     <PageContainer>
       <div className="space-y-4">
@@ -18,15 +22,17 @@ export default async function ListingPage({}: DesainerListingPage) {
             title={`Pembelajaran`}
             description="Atur Desainer-Desainer yang akan digunakan"
           />
-          <Link
-            href={'/dashboard/data/pembelajaran/create'}
-            className={cn(buttonVariants(), 'text-xs md:text-sm')}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Tambah Baru
-          </Link>
+          {!isReferensi && (
+            <Link
+              href={'/dashboard/data/pembelajaran/create'}
+              className={cn(buttonVariants(), 'text-xs md:text-sm')}
+            >
+              <Plus className="mr-2 h-4 w-4" /> Tambah Baru
+            </Link>
+          )}
         </div>
         <Separator />
-        <DesainerTable />
+        <DesainerTable isReferensi />
       </div>
     </PageContainer>
   );

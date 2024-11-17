@@ -257,13 +257,13 @@ export const navItems: NavItem[] = [
     children: [
       {
         title: 'Desainer',
-        href: '/dashboard/data/desainer',
+        href: '/dashboard/referensi/desainer',
         icon: 'chevronRight',
         label: 'desainer'
       },
       {
         title: 'Pembelajaran',
-        href: '/dashboard/data/pembelajaran',
+        href: '/dashboard/referensi/pembelajaran',
         icon: 'chevronRight',
         label: 'pembelajaran'
       }
@@ -291,13 +291,13 @@ export const resellerNavItems: NavItem[] = [
     children: [
       {
         title: 'Desainer',
-        href: '/dashboard/data/desainer',
+        href: '/dashboard/referensi/desainer',
         icon: 'chevronRight',
         label: 'desainer'
       },
       {
         title: 'Pembelajaran',
-        href: '/dashboard/data/pembelajaran',
+        href: '/dashboard/referensi/pembelajaran',
         icon: 'chevronRight',
         label: 'pembelajaran'
       }

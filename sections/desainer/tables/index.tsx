@@ -19,7 +19,11 @@ import { DesainerCellAction } from './cell-action'; // Assuming you have a simil
 import TableSkeleton from '@/components/skeleton/TableSkeleton';
 import Link from 'next/link';
 
-export default function DesainerTable() {
+type DesainerTableProps = {
+  isReferensi?: boolean;
+};
+
+export default function DesainerTable({ isReferensi }: DesainerTableProps) {
   const [data, setData] = useState<Desainer[]>([]);
   const [totalData, setTotalData] = useState(0);
   const [pagination, setPagination] = useState<Pagination>();
@@ -115,7 +119,7 @@ export default function DesainerTable() {
               <TableHead>Phone</TableHead>
               <TableHead>Portfolio</TableHead>
               <TableHead>Description</TableHead>
-              <TableHead>Actions</TableHead>
+              {!isReferensi && <TableHead>Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -129,14 +133,16 @@ export default function DesainerTable() {
                   </Link>
                 </TableCell>
                 <TableCell>{desainer.description}</TableCell>
-                <TableCell>
-                  <DesainerCellAction
-                    data={desainer}
-                    onDeleted={() => {
-                      fetchData(); // Re-fetch data to update the table after deleting
-                    }}
-                  />
-                </TableCell>
+                {!isReferensi && (
+                  <TableCell>
+                    <DesainerCellAction
+                      data={desainer}
+                      onDeleted={() => {
+                        fetchData(); // Re-fetch data to update the table after deleting
+                      }}
+                    />
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
