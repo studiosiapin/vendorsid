@@ -25,21 +25,10 @@ const SPKPage = () => {
     const canvas = await html2canvas(spkRef.current, { scale: 2 });
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgProps = pdf.getImageProperties(imgData);
     const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    const pdfHeight = pdf.internal.pageSize.getHeight();
 
-    let position = 0;
-    const pageHeight = pdf.internal.pageSize.getHeight();
-
-    while (position < pdfHeight) {
-      pdf.addImage(imgData, 'PNG', 0, -position, pdfWidth, pdfHeight);
-      position += pageHeight;
-      if (position < pdfHeight) {
-        pdf.addPage();
-      }
-    }
-
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
     pdf.save(`SPK-${invoiceId}.pdf`);
   };
 
@@ -66,7 +55,7 @@ const SPKPage = () => {
   }
 
   return (
-    <div className="flex h-screen justify-center overflow-auto bg-zinc-300 p-6">
+    <div className="h-screen overflow-auto bg-zinc-300 p-6 md:flex md:justify-center">
       <Button
         onClick={() => exportToPDF(order.invoiceId)}
         className="absolute right-10 top-6 mb-3"
@@ -76,109 +65,230 @@ const SPKPage = () => {
       <div
         id="spk"
         ref={spkRef}
-        className="h-max w-full max-w-screen-md bg-white p-6"
+        className="h-[1240px] max-h-[1240px] min-h-[1240px] w-[874px] min-w-[874px] max-w-[874px] bg-white p-6"
       >
-        <div className="mb-6 text-center">
-          <div className="text-2xl font-semibold">PT Satu Baju Indonesia</div>
-          <div className="text-xl font-semibold">SPK Produksi</div>
+        <div className="mb-6 ">
+          <div className="text-2xl font-semibold italic">
+            PT Satu Baju Indonesia
+          </div>
+          <div className="text-center text-xl font-semibold underline">
+            SPK Produksi
+          </div>
         </div>
 
         {/* Table Detail Order  */}
-        <div className="grid grid-cols-2">
-          <table className="w-full table-auto border text-sm">
-            <tr className="">
-              <td className=" p-1.5">Hari / Tgl</td>
-              <td className=" p-1.5">{formatDate(order?.createdAt || '')}</td>
-            </tr>
-            <tr className="">
-              <td className=" p-1.5">No. Invoice</td>
-              <td className=" p-1.5">{order?.invoiceId}</td>
-            </tr>
-            <tr className="pb-5">
-              <td className="p-1.5 pb-5">Customer</td>
-              <td className="p-1.5 pb-5">{order?.user.name}</td>
-            </tr>
-          </table>
-          <table className="w-full table-auto border border-l-0 text-sm">
-            <tr className="">
-              <td className=" p-1.5">Deadline</td>
-              <td className=" p-1.5">{formatDate(order?.finishAt || '')}</td>
-            </tr>
-            <tr className="">
-              <td className=" p-1.5">Job</td>
-              <td className=" p-1.5">Full Order</td>
-            </tr>
-            <tr className="">
-              <td className="p-1.5 pb-5">Bahan</td>
-              <td className="p-1.5 pb-5">{order?.bahanCode}</td>
-            </tr>
-          </table>
-        </div>
-
-        {/* Detail Qty */}
-        <div className="mt-3">
-          <div className="mb-3 text-lg font-semibold">Detail Qty</div>
-          <table className="w-full border border-gray-300 text-sm">
-            <tr className=" border-gray-300">
-              <th className="border border-gray-300 p-1.5 pb-5 text-left">
-                Kode Bahan
-              </th>
-              <th className="border border-gray-300 p-1.5 pb-5 text-left">
-                Ukuran
-              </th>
-              <th className="border border-gray-300 p-1.5 pb-5 text-left">
-                Qty
-              </th>
-            </tr>
-            {order?.orderDetails.map((detail, index) => (
-              <tr key={index} className="border border-gray-300">
-                <td className="border border-gray-300 p-1.5 pb-5">
-                  {order.bahanCode}
-                </td>
-                <td className="border border-gray-300 p-1.5 pb-5">
-                  {detail.ukuran.name}
-                </td>
-                <td className="border border-gray-300 p-1.5 pb-5">
-                  {detail.quantity}
-                </td>
-              </tr>
-            ))}
-          </table>
-        </div>
-        {/* Desain Order */}
-        <div className="mt-3">
-          <div className="grid grid-cols-2">
-            <div className="">
-              <div className="mb-2 text-lg font-semibold">Foto Layout</div>
-              <Image
-                src={order?.linkLayout || ''}
-                alt="Foto Layout"
-                width={300}
-                height={300}
-                className="h-48 w-auto"
-              />
+        <div className="mb-3 grid grid-cols-2 border text-sm">
+          <div className="flex flex-col">
+            <div className="grid grid-cols-[0.5fr_10px_1fr] border-b p-1.5">
+              <span>Hari / Tgl</span>
+              <span>:</span>
+              <span>{formatDate(order?.createdAt || '')}</span>
             </div>
-            {/* kerah */}
-            <div className="">
-              <div className="mb-2 text-lg font-semibold">Foto Kerah</div>
-              <Image
-                src={order?.linkCollar || ''}
-                alt="Foto Kerah"
-                width={300}
-                height={300}
-                className="h-48 w-auto"
-              />
+            <div className="grid grid-cols-[0.5fr_10px_1fr] border-b p-1.5">
+              <span>No. Invoice</span>
+              <span>:</span>
+              <span>{order?.invoiceId}</span>
+            </div>
+            <div className="grid grid-cols-[0.5fr_10px_1fr] p-1.5">
+              <span>Customer</span>
+              <span>:</span>
+              <span>{order?.user.name}</span>
             </div>
           </div>
-          <div className="mt-3">
-            <div className="mb-2 text-lg font-semibold">Foto Mockup</div>
-            <Image
-              src={order?.linkMockup || ''}
-              alt="Foto Mockup"
-              width={300}
-              height={300}
-              className="h-48 w-auto"
-            />
+          <div className="flex flex-col">
+            <div className="grid grid-cols-[0.5fr_10px_1fr] border-b p-1.5">
+              <span>Deadline</span>
+              <span>:</span>
+              <span className="font-semibold">
+                {formatDate(order?.finishAt || '')}
+              </span>
+            </div>
+            <div className="grid grid-cols-[0.5fr_10px_1fr] border-b p-1.5">
+              <span>Job</span>
+              <span>:</span>
+              <span>FULLORDER</span>
+            </div>
+            <div className="grid grid-cols-[0.5fr_10px_1fr] p-1.5">
+              <span>Bahan</span>
+              <span>:</span>
+              <span>{order?.bahanCode}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-[3fr_2fr] gap-2">
+          <div className="border border-black">
+            <div className="border-b border-black py-1 text-center text-xs font-semibold">
+              DESAIN
+            </div>
+            <div className="p-3">
+              {/* Desain Order */}
+              <div className="grid grid-cols-2">
+                <div className="">
+                  <div className="mb-2 text-xs">Foto Layout</div>
+                  <Image
+                    src={order?.linkLayout || ''}
+                    alt="Foto Layout"
+                    width={300}
+                    height={300}
+                    className="h-48 w-auto"
+                  />
+                </div>
+                {/* kerah */}
+                <div className="">
+                  <div className="mb-2 text-xs">Foto Kerah</div>
+                  <Image
+                    src={order?.linkCollar || ''}
+                    alt="Foto Kerah"
+                    width={300}
+                    height={300}
+                    className="h-48 w-auto"
+                  />
+                </div>
+              </div>
+              <div className="mt-3">
+                <div className="mb-2 text-xs">Foto Mockup</div>
+                <Image
+                  src={order?.linkMockup || ''}
+                  alt="Foto Mockup"
+                  width={300}
+                  height={300}
+                  className="h-48 w-auto"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="border border-black">
+              <div className="grid grid-cols-[2fr_0.5fr_1fr] border-b border-black text-xs font-semibold">
+                <div className="p-1 ">Keterangan</div>
+                <div className="border-l border-black p-1">Qty</div>
+                <div className="border-l border-black p-1">Cones</div>
+              </div>
+
+              {/* Loop row kosong dari array */}
+              {Array.from({ length: 20 }).map((_, index) => (
+                <div
+                  key={index}
+                  className={`grid grid-cols-[2fr_0.5fr_1fr] text-xs ${
+                    index === 19 ? '' : 'border-b border-black'
+                  }`}
+                >
+                  <div className="p-[10px]"></div>
+                  <div className="border-l border-black p-[10px]"></div>
+                  <div className="border-l border-black p-[10px]"></div>
+                </div>
+              ))}
+            </div>
+            <div className="border border-black">
+              <div className="border-b border-black py-1 text-center text-xs font-semibold">
+                PRINT
+              </div>
+              <div className="grid grid-cols-[1fr_1.5fr] border-b border-black">
+                <div className="p-1 text-xs font-semibold">File Masuk :</div>
+                <div className="border-l border-black p-1"></div>
+              </div>
+              <div className="grid grid-cols-[1fr_1.5fr] border-b border-black">
+                <div className="p-1 text-xs font-semibold">Start :</div>
+                <div className="border-l border-black p-1"></div>
+              </div>
+              <div className="grid grid-cols-[1fr_1.5fr] border-b border-black">
+                <div className="p-1 text-xs font-semibold">Finish :</div>
+                <div className="border-l border-black p-1"></div>
+              </div>
+              <div className="grid grid-cols-[1fr_1.5fr] border-b border-black">
+                <div className="p-1 text-xs font-semibold">Profile :</div>
+                <div className="border-l border-black p-1"></div>
+              </div>
+              <div className="grid grid-cols-[1fr_1.5fr]">
+                <div className="p-1 text-xs font-semibold">Mesin :</div>
+                <div className="border-l border-black p-1"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3 grid grid-cols-[3fr_1fr] items-start gap-2">
+          {/* Detail Qty */}
+          <div className="grid grid-cols-3 border border-black text-xs">
+            <div className="border-b border-black p-1.5">Kode Bahan</div>
+            <div className="border-b border-black p-1.5">Ukuran</div>
+            <div className="border-b border-black p-1.5">Qty</div>
+            {order?.orderDetails.map((detail, index) => (
+              <>
+                <div
+                  className={`p-1.5 ${
+                    index !== order.orderDetails.length - 1
+                      ? 'border-b border-black'
+                      : ''
+                  }`}
+                >
+                  {order.bahanCode}
+                </div>
+                <div
+                  className={`p-1.5 ${
+                    index !== order.orderDetails.length - 1
+                      ? 'border-b border-black'
+                      : ''
+                  }`}
+                >
+                  {detail.ukuran.name}
+                </div>
+                <div
+                  className={`p-1.5 ${
+                    index !== order.orderDetails.length - 1
+                      ? 'border-b border-black'
+                      : ''
+                  }`}
+                >
+                  {detail.quantity}
+                </div>
+              </>
+            ))}
+          </div>
+          <div className="border border-black text-xs">
+            <div className="border-b border-black p-1 text-center font-semibold">
+              Catatan Tambahan
+            </div>
+            <div className="border-b border-black p-2.5"></div>
+            <div className="border-b border-black p-2.5"></div>
+            <div className="border-b border-black p-2.5"></div>
+            <div className="p-2.5"></div>
+          </div>
+        </div>
+
+        <div className="mt-3 grid h-[200px] grid-cols-[1fr_1fr_1.5fr_1fr] border border-black">
+          {/* Press */}
+          <div className="flex flex-col text-xs">
+            <div className="border-b border-black p-1 font-semibold">Press</div>
+            <div className="border-b border-black p-1 ">Start:</div>
+            <div className="border-b border-black p-1 ">Finish:</div>
+            <div className="border-b border-black p-1 ">Speed:</div>
+            <div className="border-b border-black p-1 ">Suhu:</div>
+          </div>
+          {/* QC + Gunting */}
+          <div className="flex flex-col border-l border-black text-xs">
+            <div className="border-b border-black p-1 font-semibold">
+              QC + Gunting
+            </div>
+            <div className="border-b border-black p-1 ">Start:</div>
+            <div className="border-b border-black p-1 ">Finish:</div>
+            <div className="border-b border-black p-1 ">Jumlah:</div>
+            <div className="border-b border-black p-1 ">Reject:</div>
+          </div>
+          {/* Jahit */}
+          <div className="flex flex-col border-l border-black text-xs">
+            <div className="border-b border-black p-1 font-semibold">Jahit</div>
+            <div className="border-b border-black p-1 ">Start:</div>
+            <div className="border-b border-black p-1 ">Finish:</div>
+            <div className="border-b border-black p-1 ">Jumlah:</div>
+          </div>
+          {/* Packing */}
+          <div className="flex flex-col border-l border-black text-xs">
+            <div className="border-b border-black p-1 font-semibold">Jahit</div>
+            <div className="border-b border-black p-1 ">Start:</div>
+            <div className="border-b border-black p-1 ">Finish:</div>
+            <div className="border-b border-black p-1 ">Jumlah:</div>
           </div>
         </div>
       </div>

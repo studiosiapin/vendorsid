@@ -1,6 +1,6 @@
 'use client';
 import { DashboardNav } from '@/components/dashboard-nav';
-import { navItems, workerNavItems } from '@/constants/data';
+import { navItems, resellerNavItems, workerNavItems } from '@/constants/data';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
 import { ChevronLeft } from 'lucide-react';
@@ -17,6 +17,8 @@ export default function Sidebar({ className }: SidebarProps) {
   const isAdmin =
     session.data?.user.role === 'admin' ||
     session.data?.user.role === 'super_admin';
+
+  const isReseller = session.data?.user.role === 'reseller';
 
   const handleToggle = () => {
     toggle();
@@ -59,7 +61,15 @@ export default function Sidebar({ className }: SidebarProps) {
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <div className="mt-3 space-y-1">
-            <DashboardNav items={isAdmin ? navItems : workerNavItems} />
+            <DashboardNav
+              items={
+                isAdmin
+                  ? navItems
+                  : isReseller
+                  ? resellerNavItems
+                  : workerNavItems
+              }
+            />
           </div>
         </div>
       </div>

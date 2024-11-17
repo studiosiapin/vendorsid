@@ -271,7 +271,7 @@ export const navItems: NavItem[] = [
   }
 ];
 
-export const workerNavItems: NavItem[] = [
+export const resellerNavItems: NavItem[] = [
   {
     title: 'Overview',
     href: '/dashboard',
@@ -302,5 +302,14 @@ export const workerNavItems: NavItem[] = [
         label: 'pembelajaran'
       }
     ]
+  }
+];
+
+export const workerNavItems: NavItem[] = [
+  {
+    title: 'Pemesanan',
+    href: '/dashboard/pemesanan',
+    icon: 'billing',
+    label: 'pemesanan'
   }
 ];

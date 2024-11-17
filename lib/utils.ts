@@ -95,3 +95,15 @@ export function formatRupiah(amount: number): string {
     currency: 'IDR'
   }).format(amount);
 }
+
+// check is worker
+export function isWorker(role: string): boolean {
+  const workerRoles = [
+    'desain_setting',
+    'printing',
+    'pressing',
+    'sewing',
+    'packing'
+  ];
+  return workerRoles.includes(role);
+}

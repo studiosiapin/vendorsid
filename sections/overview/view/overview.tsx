@@ -1,3 +1,4 @@
+'use client';
 import { AreaGraph } from '../area-graph';
 import { BarGraph } from '../bar-graph';
 import { PieGraph } from '../pie-graph';
@@ -13,8 +14,22 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useSession } from 'next-auth/react';
+import { isWorker } from '@/lib/utils';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function OverViewPage() {
+  const session = useSession();
+  const router = useRouter();
+  useEffect(() => {
+    if (!session.data?.user) return;
+    if (isWorker(session.data.user.role)) {
+      router.push('/dashboard/pemesanan');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
+
   return (
     <PageContainer scrollable>
       <div className="space-y-2">
