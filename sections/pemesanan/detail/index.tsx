@@ -77,7 +77,7 @@ const DetailPageOrder = () => {
 
   return (
     <div className="p-6 max-md:p-1">
-      <Card className="mx-auto w-full bg-white">
+      <Card className="mx-auto w-full bg-white dark:bg-zinc-900">
         <CardHeader className="relative">
           <CardTitle className="text-left text-2xl font-bold">
             Detail Pemesanan

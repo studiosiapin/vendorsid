@@ -55,7 +55,7 @@ const SPKPage = () => {
   }
 
   return (
-    <div className="h-screen overflow-auto bg-zinc-300 p-6 md:flex md:justify-center">
+    <div className="h-screen overflow-auto bg-zinc-300 p-6 !text-black md:flex md:justify-center">
       <Button
         onClick={() => exportToPDF(order.invoiceId)}
         className="absolute right-10 top-6 mb-3"

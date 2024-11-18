@@ -15,15 +15,15 @@ const AddButton = () => {
   const isReseller = session.data?.user.role === 'reseller';
   return (
     <div className="">
-      {isAdmin ||
-        (isReseller && (
-          <Link
-            href={'/dashboard/pemesanan/create'}
-            className={cn(buttonVariants(), 'text-xs md:text-sm')}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Tambah Baru
-          </Link>
-        ))}
+      {/* isAdmin atau isReseller */}
+      {isAdmin || isReseller ? (
+        <Link
+          href={'/dashboard/pemesanan/create'}
+          className={cn(buttonVariants(), 'text-xs md:text-sm')}
+        >
+          <Plus className="mr-2 h-4 w-4" /> Tambah Baru
+        </Link>
+      ) : null}
     </div>
   );
 };

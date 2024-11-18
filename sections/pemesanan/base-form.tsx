@@ -90,6 +90,8 @@ export default function OrderForm() {
     if (!formData.totalAmount)
       newErrors.totalAmount = 'Total Amount is required';
     if (!formData.dpAmount) newErrors.dpAmount = 'DP Amount is required';
+    if (formData.dpAmount > formData.totalAmount)
+      newErrors.dpAmount = 'DP Amount must be less than Total Amount';
     if (!formData.bahanCode) newErrors.bahanCode = 'Bahan is required';
     if (!formData.jenisCode) newErrors.jenisCode = 'Jenis is required';
 
