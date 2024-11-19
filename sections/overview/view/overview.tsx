@@ -70,7 +70,8 @@ export default function OverViewPage() {
             </TabsTrigger> */}
           </TabsList>
           <TabsContent value="overview">
-            {statistics?.top5Reseller && (
+            {isLoading && <SkeletonOverview />}
+            {statistics && (
               <div id="stat-continer" className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
                   <CardStatistics
