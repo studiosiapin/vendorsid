@@ -18,6 +18,11 @@ export default auth(async (req) => {
     secret: process.env.AUTH_SECRET as string
   });
 
+  if (!req.auth) {
+    const url = req.url.replace(req.nextUrl.pathname, '/');
+    return Response.redirect(url);
+  }
+
   // Check if the token exists
   if (!token) {
     const url = req.url.replace(req.nextUrl.pathname, '/');
