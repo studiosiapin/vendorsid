@@ -15,17 +15,29 @@ import {
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSession } from 'next-auth/react';
-import { isWorker } from '@/lib/utils';
-import { useEffect } from 'react';
+import { formatRupiah, isWorker } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useStatistics } from '@/hooks/useStatistics';
+import SkeletonOverview from './skeleton-overview';
+import { StatisticResponse } from '@/types/response';
 
 export default function OverViewPage() {
   const session = useSession();
   const router = useRouter();
+  const { isLoading, getStatistics } = useStatistics();
+  const [statistics, setStatistics] = useState<StatisticResponse>();
   useEffect(() => {
     if (!session.data?.user) return;
     if (isWorker(session.data.user.role)) {
       router.push('/dashboard/pemesanan');
+    }
+    const result = getStatistics(session.data.user.id);
+
+    if (result) {
+      result.then((data) => {
+        setStatistics(data.data);
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
@@ -70,7 +82,9 @@ export default function OverViewPage() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Rp 45,231.89</div>
+                  <div className="text-2xl font-bold">
+                    {formatRupiah(statistics?.totalPemasukan || 0)}
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     +20.1% from last month
                   </p>

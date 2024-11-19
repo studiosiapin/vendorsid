@@ -32,3 +32,45 @@ export interface OrderResponse {
     };
   }[];
 }
+
+// Statistic response
+export interface StatisticResponse {
+  role: string;
+  totalCompletedOrders: number;
+  top5Bahan: TopBahan[];
+  top5Jenis: TopJenis[];
+  top5Reseller: TopReseller[];
+  totalPemasukan: number;
+  totalSisa: number;
+}
+
+export interface TopBahan {
+  count: number;
+  bahan: {
+    code: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+  };
+}
+
+export interface TopJenis {
+  count: number;
+  jenis: {
+    code: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+  };
+}
+
+export interface TopReseller {
+  count: number;
+  totalAmount: number;
+  reseller: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+  };
+}
