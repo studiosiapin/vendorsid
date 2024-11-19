@@ -4,13 +4,31 @@
 
 import NextAuth from 'next-auth';
 import authConfig from './auth.config';
+import { getToken } from 'next-auth/jwt';
+import { isWorker } from './lib/utils';
 
-const { auth } = NextAuth(authConfig);
+const { auth } = NextAuth({
+  ...authConfig,
+  secret: process.env.AUTH_SECRET
+});
 
-export default auth((req) => {
-  if (!req.auth) {
+export default auth(async (req) => {
+  const token = await getToken({
+    req,
+    secret: process.env.AUTH_SECRET as string
+  });
+
+  // Check if the token exists
+  if (!token) {
     const url = req.url.replace(req.nextUrl.pathname, '/');
     return Response.redirect(url);
+  }
+
+  if (req.nextUrl.pathname === '/dashboard') {
+    if (isWorker(token.role as string)) {
+      const url = req.url.replace(req.nextUrl.pathname, '/dashboard/pemesanan');
+      return Response.redirect(url);
+    }
   }
 });
 

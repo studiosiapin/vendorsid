@@ -12,13 +12,27 @@ import { addDays, format } from 'date-fns';
 import * as React from 'react';
 import { DateRange } from 'react-day-picker';
 
+interface CalendarDateRangePickerProps {
+  className?: string;
+  initialDate?: DateRange;
+  onChange?: (date: DateRange) => void;
+}
+
 export function CalendarDateRangePicker({
-  className
-}: React.HTMLAttributes<HTMLDivElement>) {
+  className,
+  initialDate,
+  onChange
+}: CalendarDateRangePickerProps) {
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2023, 0, 20),
-    to: addDays(new Date(2023, 0, 20), 20)
+    from: initialDate?.from || addDays(new Date(2023, 0, 20), 10),
+    to: initialDate?.to || addDays(new Date(2023, 0, 20), 20)
   });
+
+  React.useEffect(() => {
+    if (onChange && date) {
+      onChange(date);
+    }
+  }, [date, onChange]);
 
   return (
     <div className={cn('grid gap-2', className)}>

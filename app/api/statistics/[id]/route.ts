@@ -4,12 +4,14 @@ import { BaseAPIResponse } from '@/types/common';
 
 const prisma = new PrismaClient();
 
-// GET overview statistics
-export async function GET(
+// POST overview statistics
+export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const { startDate, endDate } = await req.json();
+
     const user = await prisma.user.findUnique({
       where: {
         id: params.id
@@ -30,11 +32,22 @@ export async function GET(
       );
     }
 
+    const dateFilter =
+      startDate && endDate
+        ? {
+            createdAt: {
+              gte: new Date(startDate),
+              lte: new Date(endDate)
+            }
+          }
+        : {};
+
     // Total Completed Orders
     const totalCompletedOrders = await prisma.order.count({
       where: {
         createdBy: isReseller ? user.id : undefined,
-        status: 'COMPLETED'
+        status: 'COMPLETED',
+        ...dateFilter
       }
     });
 
@@ -54,14 +67,15 @@ export async function GET(
       }
     });
 
-    // TOP 5 Bahan yang di order (include relasi ke Bahan)
+    // TOP 5 Bahan that were ordered
     const top5BahanRaw = await prisma.order.groupBy({
       by: ['bahanCode'],
       _count: {
         id: true
       },
       where: {
-        createdBy: isReseller ? user.id : undefined
+        createdBy: isReseller ? user.id : undefined,
+        ...dateFilter
       },
       orderBy: {
         _count: {
@@ -71,7 +85,6 @@ export async function GET(
       take: 5
     });
 
-    // Ambil data Bahan berdasarkan bahanCode dari hasil groupBy
     const bahanCodes = top5BahanRaw.map((item) => item.bahanCode);
     const bahanDetails = await prisma.bahan.findMany({
       where: {
@@ -85,20 +98,20 @@ export async function GET(
       }
     });
 
-    // Gabungkan hasil groupBy dengan data relasi
     const top5Bahan = top5BahanRaw.map((item) => ({
       count: item._count.id,
       bahan: bahanDetails.find((bahan) => bahan.code === item.bahanCode)
     }));
 
-    // TOP 5 Jenis yang di order (include relasi ke Jenis)
+    // TOP 5 Jenis that were ordered
     const top5JenisRaw = await prisma.order.groupBy({
       by: ['jenisCode'],
       _count: {
         id: true
       },
       where: {
-        createdBy: isReseller ? user.id : undefined
+        createdBy: isReseller ? user.id : undefined,
+        ...dateFilter
       },
       orderBy: {
         _count: {
@@ -108,7 +121,6 @@ export async function GET(
       take: 5
     });
 
-    // Ambil data Jenis berdasarkan jenisCode dari hasil groupBy
     const jenisCodes = top5JenisRaw.map((item) => item.jenisCode);
     const jenisDetails = await prisma.jenis.findMany({
       where: {
@@ -122,7 +134,6 @@ export async function GET(
       }
     });
 
-    // Gabungkan hasil groupBy dengan data relasi
     const top5Jenis = top5JenisRaw.map((item) => ({
       count: item._count.id,
       jenis: jenisDetails.find((jenis) => jenis.code === item.jenisCode)
@@ -137,31 +148,32 @@ export async function GET(
         user: {
           id: isReseller ? user.id : undefined
         },
-        status: 'COMPLETED'
+        status: 'COMPLETED',
+        ...dateFilter
       }
     });
 
-    // TOP 5 Reseller (ambil dari total order dan total pemasukan)
+    // TOP 5 Resellers
     const top5ResellerRaw = await prisma.order.groupBy({
       by: ['createdBy'],
       _count: {
-        id: true // Total orders
+        id: true
       },
       _sum: {
-        totalAmount: true // Total pemasukan
+        totalAmount: true
       },
       where: {
-        status: 'COMPLETED' // Hanya order yang selesai
+        status: 'COMPLETED',
+        ...dateFilter
       },
       orderBy: {
         _count: {
-          id: 'desc' // Urutkan berdasarkan jumlah order
+          id: 'desc'
         }
       },
-      take: 5 // Ambil 5 teratas
+      take: 5
     });
 
-    // Ambil detail User berdasarkan createdBy dari hasil groupBy
     const resellerIds = top5ResellerRaw.map((item) => item.createdBy);
     const resellerDetails = await prisma.user.findMany({
       where: {
@@ -175,7 +187,6 @@ export async function GET(
       }
     });
 
-    // Gabungkan hasil groupBy dengan data User
     const top5Reseller = top5ResellerRaw.map((item) => ({
       count: item._count.id,
       totalAmount: item._sum.totalAmount,
@@ -193,36 +204,36 @@ export async function GET(
         },
         status: {
           not: 'COMPLETED'
-        }
+        },
+        ...dateFilter
       }
     });
 
-    // Barchart total order dan amount per hari
+    // Barchart data
     const orderPerDay = await prisma.order.groupBy({
       by: ['createdAt'],
       _count: {
-        id: true // Hitung jumlah order
+        id: true
       },
       _sum: {
-        totalAmount: true // Jumlahkan total amount
+        totalAmount: true
       },
       where: {
-        createdBy: isReseller ? user.id : undefined, // Filter jika reseller
-        status: 'COMPLETED' // Hanya order yang selesai
+        createdBy: isReseller ? user.id : undefined,
+        status: 'COMPLETED',
+        ...dateFilter
       },
       orderBy: {
-        createdAt: 'asc' // Urutkan berdasarkan tanggal
+        createdAt: 'asc'
       }
     });
 
-    // Format hasilnya agar hanya mengambil tanggal tanpa jam
     const barchartData = orderPerDay.map((item) => ({
-      date: item.createdAt.toISOString().split('T')[0], // Ambil tanggal saja
-      order: item._count.id, // Jumlah order
-      amount: item._sum.totalAmount || 0 // Total amount
+      date: item.createdAt.toISOString().split('T')[0],
+      order: item._count.id,
+      amount: item._sum.totalAmount || 0
     }));
 
-    // Prepare the response
     const response: BaseAPIResponse<{
       role: string;
       totalCompletedOrders: number;
@@ -253,7 +264,7 @@ export async function GET(
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error(error); // Log the error for debugging
+    console.error(error);
     return NextResponse.json(
       { error: 'Error fetching overview data' },
       { status: 500 }
