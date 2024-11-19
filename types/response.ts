@@ -37,11 +37,20 @@ export interface OrderResponse {
 export interface StatisticResponse {
   role: string;
   totalCompletedOrders: number;
+  totalWorkers: number;
+  totalResellers: number;
   top5Bahan: TopBahan[];
   top5Jenis: TopJenis[];
   top5Reseller: TopReseller[];
   totalPemasukan: number;
   totalSisa: number;
+  barchartData: [
+    {
+      date: string;
+      amount: number;
+      order: number;
+    }
+  ];
 }
 
 export interface TopBahan {

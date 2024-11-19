@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 // get statistics
 export const useStatistics = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getStatistics = async (id: string) => {
     setIsLoading(true);

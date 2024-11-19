@@ -38,6 +38,22 @@ export async function GET(
       }
     });
 
+    // Total Workers
+    const totalWorkers = await prisma.user.count({
+      where: {
+        role: {
+          not: 'reseller'
+        }
+      }
+    });
+
+    // Total Resellers
+    const totalResellers = await prisma.user.count({
+      where: {
+        role: 'reseller'
+      }
+    });
+
     // TOP 5 Bahan yang di order (include relasi ke Bahan)
     const top5BahanRaw = await prisma.order.groupBy({
       by: ['bahanCode'],
@@ -181,26 +197,57 @@ export async function GET(
       }
     });
 
+    // Barchart total order dan amount per hari
+    const orderPerDay = await prisma.order.groupBy({
+      by: ['createdAt'],
+      _count: {
+        id: true // Hitung jumlah order
+      },
+      _sum: {
+        totalAmount: true // Jumlahkan total amount
+      },
+      where: {
+        createdBy: isReseller ? user.id : undefined, // Filter jika reseller
+        status: 'COMPLETED' // Hanya order yang selesai
+      },
+      orderBy: {
+        createdAt: 'asc' // Urutkan berdasarkan tanggal
+      }
+    });
+
+    // Format hasilnya agar hanya mengambil tanggal tanpa jam
+    const barchartData = orderPerDay.map((item) => ({
+      date: item.createdAt.toISOString().split('T')[0], // Ambil tanggal saja
+      order: item._count.id, // Jumlah order
+      amount: item._sum.totalAmount || 0 // Total amount
+    }));
+
     // Prepare the response
     const response: BaseAPIResponse<{
       role: string;
       totalCompletedOrders: number;
+      totalWorkers?: number;
+      totalResellers?: number;
       top5Bahan: any[];
       top5Jenis: any[];
       top5Reseller: any[];
       totalPemasukan: any;
       totalSisa: any;
+      barchartData?: any[];
     }> = {
       message: 'Overview data retrieved successfully',
       code: 200,
       data: {
         role: user.role,
         totalCompletedOrders,
+        totalWorkers: isAdmin ? totalWorkers : undefined,
+        totalResellers: isAdmin ? totalResellers : undefined,
         top5Bahan,
         top5Jenis,
-        top5Reseller: !isReseller ? top5Reseller : [],
+        top5Reseller: isAdmin ? top5Reseller : [],
         totalPemasukan: totalPemasukan._sum.totalAmount,
-        totalSisa: totalSisa._sum.totalAmount
+        totalSisa: totalSisa._sum.totalAmount,
+        barchartData: isAdmin ? barchartData : undefined
       }
     };
 
