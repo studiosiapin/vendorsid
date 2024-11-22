@@ -18,6 +18,7 @@ import { Jenis } from '@prisma/client';
 import { JenisCellAction } from './cell-action'; // Assuming you have a JenisCellAction component
 import Image from 'next/image';
 import TableSkeleton from '@/components/skeleton/TableSkeleton';
+import { formatRupiah } from '@/lib/utils';
 
 export default function JenisTable() {
   const [data, setData] = useState<Jenis[]>([]);
@@ -114,6 +115,7 @@ export default function JenisTable() {
               <TableHead>Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Code</TableHead>
+              <TableHead>Harga</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -131,6 +133,7 @@ export default function JenisTable() {
                 </TableCell>
                 <TableCell>{jenis.name}</TableCell>
                 <TableCell>{jenis.code}</TableCell>
+                <TableCell>{formatRupiah(jenis.harga || 0)}</TableCell>
                 <TableCell>{jenis.description}</TableCell>
                 <TableCell>
                   <JenisCellAction

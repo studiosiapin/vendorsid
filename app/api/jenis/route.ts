@@ -7,12 +7,13 @@ const prisma = new PrismaClient();
 // Create a new Jenis
 export async function POST(req: NextRequest) {
   try {
-    const { code, name, description, imageUrl } = await req.json();
+    const { code, name, harga, description, imageUrl } = await req.json();
 
     const newJenis = await prisma.jenis.create({
       data: {
         code,
         name,
+        harga,
         description,
         imageUrl
       }
@@ -63,6 +64,7 @@ export async function GET(req: NextRequest) {
         id: true,
         code: true,
         name: true,
+        harga: true,
         description: true,
         imageUrl: true
       },

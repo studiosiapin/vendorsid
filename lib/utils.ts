@@ -96,6 +96,11 @@ export function formatRupiah(amount: number): string {
   }).format(amount);
 }
 
+// rupiah to number
+export function rupiahToNumber(rupiah: string): number {
+  return Number(rupiah.replace(/[^0-9]/g, ''));
+}
+
 // check is worker
 export function isWorker(role: string): boolean {
   const workerRoles = [

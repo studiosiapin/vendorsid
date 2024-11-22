@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast';
 // Define the schema for Jenis
 export const jenisFormSchemaDefault = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
+  harga: z.number().positive('Harga must be a positive number'),
   description: z.string().optional()
 });
 

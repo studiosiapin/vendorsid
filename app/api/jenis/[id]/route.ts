@@ -18,6 +18,7 @@ export async function GET(
         id: true,
         code: true,
         name: true,
+        harga: true,
         description: true,
         imageUrl: true
       }
@@ -66,6 +67,7 @@ export async function PUT(
       data: {
         code: jenisData.code,
         name: jenisData.name,
+        harga: jenisData.harga,
         description: jenisData.description,
         imageUrl: jenisData.imageUrl
       }

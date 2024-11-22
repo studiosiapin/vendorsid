@@ -27,6 +27,8 @@ import useUploadImage from '@/hooks/useUploadImage';
 import { FileUploader } from '@/components/file-uploader';
 import { CircleX } from 'lucide-react';
 import Image from 'next/image';
+import CurrencyInput from '@/components/currency-input';
+import { rupiahToNumber } from '@/lib/utils';
 
 const formSchema = z.object({
   code: z.string().min(2, {
@@ -35,6 +37,9 @@ const formSchema = z.object({
   image: z.any().optional(),
   name: z.string().min(2, {
     message: 'Name must be at least 2 characters.'
+  }),
+  harga: z.number().min(0, {
+    message: 'Harga must be at least  0.'
   }),
   description: z
     .string()
@@ -59,7 +64,8 @@ export default function JenisForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      description: ''
+      description: '',
+      harga: 0
     }
   });
 
@@ -186,6 +192,31 @@ export default function JenisForm() {
                     <FormControl>
                       <Input placeholder="Enter name" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* HARGA */}
+              <FormField
+                control={form.control}
+                name="harga"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Harga</FormLabel>
+                    {field.value && (
+                      <CurrencyInput
+                        placeholder="Enter harga"
+                        {...field}
+                        value={field.value ? field.value.toString() : ''}
+                        onChange={(e) => {
+                          form.setValue(
+                            'harga',
+                            rupiahToNumber(e.target.value)
+                          );
+                        }}
+                      />
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}

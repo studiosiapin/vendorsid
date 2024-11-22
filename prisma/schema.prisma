@@ -46,6 +46,7 @@ model Jenis {
   name        String
   description String?
   imageUrl    String?   @map("image_url")
+  harga       Int?      @default(0)
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt   DateTime? @map("deleted_at") @db.Timestamptz
@@ -73,6 +74,7 @@ model Learning {
   name        String
   source      String?
   description String?
+  thubmnail   String?
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt   DateTime? @map("deleted_at") @db.Timestamptz
@@ -88,6 +90,7 @@ model User {
   role          String
   phone         String?
   gender        String?
+  picture       String?
   createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime        @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt     DateTime?       @map("deleted_at") @db.Timestamptz
