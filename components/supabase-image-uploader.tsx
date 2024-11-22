@@ -11,13 +11,15 @@ interface SupabaseImageUploaderProps {
   initialUrl?: string;
   onUpload?: (imageUrl: string) => void;
   errMessage?: string;
+  imageClass?: string;
 }
 
 const SupabaseImageUploader = ({
   name,
   initialUrl,
   onUpload,
-  errMessage
+  errMessage,
+  imageClass
 }: SupabaseImageUploaderProps) => {
   const { imageUrl: upImageUrl, isUploading, uploadImage } = useUploadImage();
   const [imageUrl, setImageUrl] = useState<string | null>(initialUrl || null);
@@ -59,7 +61,7 @@ const SupabaseImageUploader = ({
             width={1000}
             height={1000}
             alt=""
-            className="w-full"
+            className={`w-full ${imageClass}`}
           />
         </div>
       )}

@@ -23,8 +23,10 @@ import {
   useUpdateDesainer
 } from '@/hooks/useDesainer';
 import { Textarea } from '@/components/ui/textarea';
+import SupabaseImageUploader from '@/components/supabase-image-uploader';
 
 export const desainerFormSchema = z.object({
+  imageUrl: z.string().min(1, 'Profile picture is required'),
   name: z.string().min(1, 'Name is required'),
   phone: z.string().optional(),
   portofolio: z.string().optional(),
@@ -94,6 +96,22 @@ export default function DesainerForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <SupabaseImageUploader
+                      initialUrl={field.value}
+                      onUpload={(url) => form.setValue('imageUrl', url)}
+                      errMessage={form.formState.errors.imageUrl?.message}
+                      name="Profile Picture"
+                      imageClass="rounded-full bg-zinc-200 w-20 h-20 object-cover"
+                    />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="name"

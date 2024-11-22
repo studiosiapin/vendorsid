@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 
 // Define the schema for Desainer
 export const desainerFormSchemaDefault = z.object({
+  imageUrl: z.string().min(1, 'Profile picture is required'),
   name: z.string().min(1, 'Name is required'),
   phone: z.string().optional(),
   portofolio: z.string().optional(),

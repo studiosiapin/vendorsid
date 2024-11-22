@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -18,12 +18,9 @@ import { Desainer } from '@prisma/client';
 import { DesainerCellAction } from './cell-action'; // Assuming you have a similar cell action component for Desainer
 import TableSkeleton from '@/components/skeleton/TableSkeleton';
 import Link from 'next/link';
+import Image from 'next/image';
 
-type DesainerTableProps = {
-  isReferensi?: boolean;
-};
-
-export default function DesainerTable({ isReferensi }: DesainerTableProps) {
+export default function DesainerTable() {
   const [data, setData] = useState<Desainer[]>([]);
   const [totalData, setTotalData] = useState(0);
   const [pagination, setPagination] = useState<Pagination>();
@@ -32,6 +29,10 @@ export default function DesainerTable({ isReferensi }: DesainerTableProps) {
   const [limit, setLimit] = useState<number>(10); // Number of items per page
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Ref to hold the timeout
   const [isLoading, setIsLoading] = useState(true);
+  const isReferensi = useMemo(
+    () => window.location.pathname.includes('referensi'),
+    []
+  );
 
   // Function to update the URL parameters
   const updateURLParams = () => {
@@ -115,6 +116,7 @@ export default function DesainerTable({ isReferensi }: DesainerTableProps) {
         <Table className="rounded border-2">
           <TableHeader>
             <TableRow>
+              <TableCell>Picture</TableCell>
               <TableHead>Name</TableHead>
               <TableHead>Phone</TableHead>
               <TableHead>Portfolio</TableHead>
@@ -125,6 +127,15 @@ export default function DesainerTable({ isReferensi }: DesainerTableProps) {
           <TableBody>
             {data.map((desainer) => (
               <TableRow key={desainer.id}>
+                <TableCell>
+                  <Image
+                    src={desainer.imageUrl || '/default-avatar.png'}
+                    alt={desainer.name}
+                    width={200}
+                    height={200}
+                    className="h-w-12 aspect-square w-12 rounded-full bg-zinc-200 object-cover"
+                  />
+                </TableCell>
                 <TableCell>{desainer.name}</TableCell>
                 <TableCell>{desainer.phone}</TableCell>
                 <TableCell>
