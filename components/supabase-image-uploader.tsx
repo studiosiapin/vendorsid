@@ -56,8 +56,8 @@ const SupabaseImageUploader = ({
           </div>
           <Image
             src={imageUrl}
-            width={200}
-            height={200}
+            width={1000}
+            height={1000}
             alt=""
             className="w-full"
           />

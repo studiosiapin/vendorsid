@@ -5,7 +5,7 @@ import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import DesainerTable from '../tables';
+import LearningTable from '../tables';
 
 type LearningListingPage = {
   isReferensi?: boolean;
@@ -32,7 +32,7 @@ export default async function ListingPage({
           )}
         </div>
         <Separator />
-        <DesainerTable isReferensi />
+        <LearningTable />
       </div>
     </PageContainer>
   );

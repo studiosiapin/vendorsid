@@ -16,6 +16,7 @@ export async function GET(
       },
       select: {
         id: true,
+        thumbnail: true,
         name: true,
         source: true,
         description: true
@@ -63,6 +64,7 @@ export async function PUT(
         id: params.id
       },
       data: {
+        thumbnail: learningData.thubmnail,
         name: learningData.name,
         source: learningData.source,
         description: learningData.description

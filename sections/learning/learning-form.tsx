@@ -24,6 +24,7 @@ import {
   learningFormSchemaDefault
 } from '@/hooks/useLearning';
 import { Textarea } from '@/components/ui/textarea';
+import SupabaseImageUploader from '@/components/supabase-image-uploader';
 
 export default function LearningForm() {
   const { Id } = useParams<{ Id: string }>();
@@ -84,6 +85,21 @@ export default function LearningForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="thumbnail"
+                render={({ field }) => (
+                  <FormItem>
+                    <SupabaseImageUploader
+                      name="Thumbnail"
+                      initialUrl={field.value}
+                      onUpload={(url) => form.setValue('thumbnail', url)}
+                      errMessage={form.formState.errors.thumbnail?.message}
+                    />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="name"

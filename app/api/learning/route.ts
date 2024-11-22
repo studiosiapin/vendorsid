@@ -7,10 +7,11 @@ const prisma = new PrismaClient();
 // Create a new Learning
 export async function POST(req: NextRequest) {
   try {
-    const { name, source, description } = await req.json();
+    const { thumbnail, name, source, description } = await req.json();
 
     const newLearning = await prisma.learning.create({
       data: {
+        thumbnail,
         name,
         source,
         description
@@ -60,6 +61,7 @@ export async function GET(req: NextRequest) {
       where: filters,
       select: {
         id: true,
+        thumbnail: true,
         name: true,
         source: true,
         description: true

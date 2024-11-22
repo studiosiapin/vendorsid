@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -17,12 +17,9 @@ import { CircleX } from 'lucide-react';
 import { Learning } from '@prisma/client';
 import { LearningCellAction } from './cell-action'; // Assuming you have a LearningCellAction component
 import TableSkeleton from '@/components/skeleton/TableSkeleton';
+import Image from 'next/image';
 
-type LearningTableProps = {
-  isReferensi?: boolean;
-};
-
-export default function LearningTable({ isReferensi }: LearningTableProps) {
+export default function LearningTable() {
   const [data, setData] = useState<Learning[]>([]);
   const [totalData, setTotalData] = useState(0);
   const [pagination, setPagination] = useState<Pagination>();
@@ -31,6 +28,10 @@ export default function LearningTable({ isReferensi }: LearningTableProps) {
   const [limit, setLimit] = useState<number>(10); // Number of items per page
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Ref to hold the timeout
   const [isLoading, setIsLoading] = useState(true);
+  const isReferensi = useMemo(() => {
+    return window.location.pathname.startsWith('/dashboard/referensi');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [window.location.pathname]); // Assuming this is a referensi table
 
   // Function to update the URL parameters
   const updateURLParams = () => {
@@ -114,6 +115,7 @@ export default function LearningTable({ isReferensi }: LearningTableProps) {
         <Table className="rounded border-2">
           <TableHeader>
             <TableRow>
+              <TableHead>Thumbnail</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Source</TableHead>
               <TableHead>Description</TableHead>
@@ -123,6 +125,15 @@ export default function LearningTable({ isReferensi }: LearningTableProps) {
           <TableBody>
             {data.map((learning) => (
               <TableRow key={learning.id}>
+                <TableCell>
+                  <Image
+                    src={learning.thumbnail || '/placeholder.png'}
+                    alt={learning.name}
+                    width={1000}
+                    height={1000}
+                    className="aspect-video h-16 w-auto rounded object-cover"
+                  />
+                </TableCell>
                 <TableCell>{learning.name}</TableCell>
                 <TableCell>{learning.source}</TableCell>
                 <TableCell>{learning.description}</TableCell>

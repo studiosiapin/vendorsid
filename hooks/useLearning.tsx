@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 
 // Define the schema for Learning
 export const learningFormSchemaDefault = z.object({
+  thumbnail: z.string().min(1, 'Thumbnail is required'),
   name: z.string().min(1, 'Name is required'),
   source: z.string().optional(),
   description: z.string().optional()
