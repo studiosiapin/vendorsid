@@ -247,6 +247,12 @@ export const navItems: NavItem[] = [
         href: '/dashboard/data/pembelajaran',
         icon: 'chevronRight',
         label: 'pembelajaran'
+      },
+      {
+        title: 'Shipment',
+        href: '/dashboard/data/shipment',
+        icon: 'chevronRight',
+        label: 'shipment'
       }
     ]
   },

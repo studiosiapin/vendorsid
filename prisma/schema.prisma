@@ -161,6 +161,19 @@ model OrderProgress {
   @@map("order_progress")
 }
 
+model Shipment {
+  id          String    @id @default(uuid())
+  code        String    @unique
+  logo        String?
+  title       String
+  description String?
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz
+
+  @@map("shipments")
+}
+
 enum Role {
   super_admin
   admin
