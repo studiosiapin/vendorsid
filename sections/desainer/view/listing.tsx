@@ -32,7 +32,7 @@ export default async function ListingPage({
           )}
         </div>
         <Separator />
-        <DesainerTable isReferensi />
+        <DesainerTable />
       </div>
     </PageContainer>
   );
