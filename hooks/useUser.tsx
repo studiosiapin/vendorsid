@@ -179,19 +179,20 @@ export function useUpdateUser() {
 export function useUpdateProfile() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const updateUser = async (
+  const updateProfile = async (
     id: string,
     userData: {
       name: string;
       email: string;
-      gender: string;
+      role: string;
       phone: string;
+      gender: string;
       picture: string;
     }
   ) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/user/${id}`, {
+      const response = await fetch(`/api/profile/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -208,7 +209,7 @@ export function useUpdateProfile() {
       toast.success(data.message);
       return data;
     } catch (error) {
-      toast.error('Error updating user');
+      toast.error('Error updating profile');
       throw error;
     } finally {
       setIsLoading(false);
@@ -217,6 +218,6 @@ export function useUpdateProfile() {
 
   return {
     isLoading,
-    updateUser
+    updateProfile
   };
 }

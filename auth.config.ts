@@ -40,7 +40,8 @@ const authConfig = {
             id: user.id,
             name: user.name,
             email: user.email,
-            role: user.role
+            role: user.role,
+            picture: user.picture ?? ''
           };
         } else {
           return null;
@@ -56,6 +57,7 @@ const authConfig = {
       if (user) {
         token.id = user.id; // Menambah id ke token
         token.role = user.role; // Menambah role ke token
+        token.picture = user.picture; // Menambah picture ke token
       }
       return token;
     },
@@ -63,6 +65,7 @@ const authConfig = {
       if (token) {
         session.user.id = token.id as string; // Menentukan id di sesi
         session.user.role = token.role as string; // Menentukan role di sesi
+        session.user.picture = token.picture as string; // Menentukan picture di sesi
       }
       return session;
     }

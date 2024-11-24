@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { BaseAPIResponse } from '@/types/common';
-import bcrypt from 'bcryptjs';
 import prisma from '@/server/db';
 
 export async function PUT(
@@ -21,17 +20,15 @@ export async function PUT(
       );
     }
 
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-
     const user = await prisma.user.update({
-      where: { id: String(id) },
+      where: { id },
       data: {
         name: userData.name,
         email: userData.email,
         role: userData.role,
         phone: userData.phone,
         gender: userData.gender,
-        password: hashedPassword
+        picture: userData.picture
       }
     });
 
