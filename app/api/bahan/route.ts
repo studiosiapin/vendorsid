@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, Bahan } from '@prisma/client';
+import { Bahan } from '@prisma/client';
 import { BaseAPIResponse } from '@/types/common';
-import { slugify } from '@/lib/utils';
-
-const prisma = new PrismaClient();
+import prisma from '@/server/db';
 
 // Create a new Bahan
 export async function POST(req: NextRequest) {

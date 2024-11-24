@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, Jenis } from '@prisma/client';
+import { Jenis } from '@prisma/client';
 import { BaseAPIResponse } from '@/types/common';
-
-const prisma = new PrismaClient();
+import prisma from '@/server/db';
 
 // Get Jenis by ID
 export async function GET(

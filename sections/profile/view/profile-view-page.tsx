@@ -1,6 +1,6 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
-import ProfileCreateForm from '../profile-create-form';
 import PageContainer from '@/components/layout/page-container';
+import ProfilePage from '../profile-page';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -11,7 +11,7 @@ export default function ProfileViewPage() {
     <PageContainer>
       <div className="space-y-4">
         <Breadcrumbs items={breadcrumbItems} />
-        <ProfileCreateForm categories={[]} initialData={null} />
+        <ProfilePage />
       </div>
     </PageContainer>
   );

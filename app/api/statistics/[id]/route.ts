@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { BaseAPIResponse } from '@/types/common';
-
-const prisma = new PrismaClient();
+import prisma from '@/server/db';
 
 // POST overview statistics
 export async function POST(

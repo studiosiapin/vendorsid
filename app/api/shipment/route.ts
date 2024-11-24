@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, Shipment } from '@prisma/client';
+import { Shipment } from '@prisma/client';
 import { BaseAPIResponse } from '@/types/common';
-
-const prisma = new PrismaClient();
+import prisma from '@/server/db';
 
 // Create a new Shipment
 export async function POST(req: NextRequest) {

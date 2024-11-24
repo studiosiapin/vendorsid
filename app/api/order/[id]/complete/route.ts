@@ -1,7 +1,7 @@
+import prisma from '@/server/db';
 import { BaseAPIResponse } from '@/types/common';
-import { Order, OrderStatus, PrismaClient } from '@prisma/client';
+import { Order, OrderStatus } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-const prisma = new PrismaClient();
 
 // Api route for completing an order
 export async function POST(

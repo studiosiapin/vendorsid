@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, Learning } from '@prisma/client';
+import { Learning } from '@prisma/client';
 import { BaseAPIResponse } from '@/types/common';
-
-const prisma = new PrismaClient();
+import prisma from '@/server/db';
 
 // Create a new Learning
 export async function POST(req: NextRequest) {

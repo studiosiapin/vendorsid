@@ -11,7 +11,9 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { PowerIcon } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
 export function UserNav() {
   const { data: session } = useSession();
   if (session) {
@@ -41,24 +43,17 @@ export function UserNav() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              Profile
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Billing
-              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Settings
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>New Team</DropdownMenuItem>
+            <Link href="/dashboard/profile">
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+            </Link>
+            <Link href="/dashboard/change-pass">
+              <DropdownMenuItem>Change Password</DropdownMenuItem>
+            </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>
+            <PowerIcon className="mr-2 h-4 w-4" />
             Log out
-            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

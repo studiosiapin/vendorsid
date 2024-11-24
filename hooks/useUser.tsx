@@ -174,3 +174,49 @@ export function useUpdateUser() {
     updateUser
   };
 }
+
+// update user profile
+export function useUpdateProfile() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const updateUser = async (
+    id: string,
+    userData: {
+      name: string;
+      email: string;
+      gender: string;
+      phone: string;
+      picture: string;
+    }
+  ) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/user/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
+      }
+
+      toast.success(data.message);
+      return data;
+    } catch (error) {
+      toast.error('Error updating user');
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    isLoading,
+    updateUser
+  };
+}

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { BaseAPIResponse } from '@/types/common';
 import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
+import prisma from '@/server/db';
 
 export async function POST(req: NextRequest) {
   try {
@@ -72,7 +71,8 @@ export async function GET(req: NextRequest) {
         email: true,
         role: true,
         gender: true,
-        phone: true
+        phone: true,
+        picture: true
       },
       skip: (page - 1) * limit,
       take: limit

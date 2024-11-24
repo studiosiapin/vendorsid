@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { BaseAPIResponse } from '@/types/common';
 import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
+import prisma from '@/server/db';
 
 // Get user by id
 export async function GET(
@@ -21,7 +20,8 @@ export async function GET(
         email: true,
         role: true,
         gender: true,
-        phone: true
+        phone: true,
+        picture: true
       }
     });
 
