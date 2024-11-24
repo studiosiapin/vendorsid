@@ -221,3 +221,47 @@ export function useUpdateProfile() {
     updateProfile
   };
 }
+
+export function useChangePassword() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>();
+
+  const changePassword = async (
+    userId: string,
+    currentPassword: string,
+    newPassword: string
+  ) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/profile/${userId}/change-pass`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error.error || 'Something went wrong');
+        throw new Error(data.error.error || 'Something went wrong');
+      }
+
+      toast.success(data.message);
+      return data;
+    } catch (error) {
+      setError('Error changing password');
+      toast.error('Error changing password');
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    error,
+    isLoading,
+    changePassword
+  };
+}

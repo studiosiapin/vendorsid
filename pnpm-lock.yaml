@@ -196,6 +196,9 @@ importers:
       sort-by:
         specifier: ^1.2.0
         version: 1.2.0
+      sweetalert2:
+        specifier: ^11.14.5
+        version: 11.14.5
       tailwind-merge:
         specifier: ^1.14.0
         version: 1.14.0
@@ -5445,6 +5448,12 @@ packages:
       }
     engines: { node: '>=12.0.0' }
 
+  sweetalert2@11.14.5:
+    resolution:
+      {
+        integrity: sha512-8MWk5uc/r6bWhiJWkUXyEuApfXAhSCZT8FFX7pZXL7YwaPxq+9Ynhi2dUzWkOFn9jvLjKj22CXuccZ+IHcnjvQ==
+      }
+
   tailwind-merge@1.14.0:
     resolution:
       {
@@ -9327,6 +9336,8 @@ snapshots:
 
   svg-pathdata@6.0.3:
     optional: true
+
+  sweetalert2@11.14.5: {}
 
   tailwind-merge@1.14.0: {}
 
