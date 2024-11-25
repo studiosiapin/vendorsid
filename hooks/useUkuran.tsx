@@ -35,7 +35,13 @@ export function useGetAllUkuran() {
       const response = await fetch(
         `/api/ukuran?searchQuery=${encodeURIComponent(
           searchQuery
-        )}&page=${page}&limit=${limit}`
+        )}&page=${page}&limit=${limit}`,
+        {
+          cache: 'force-cache',
+          next: {
+            revalidate: 60
+          }
+        }
       );
 
       const data: BaseAPIResponse<
@@ -113,6 +119,10 @@ export function useGetUkuranById() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
+        },
+        cache: 'force-cache',
+        next: {
+          revalidate: 60
         }
       });
 

@@ -37,7 +37,13 @@ export function useGetAllDesainer() {
       const response = await fetch(
         `/api/desainer?searchQuery=${encodeURIComponent(
           searchQuery
-        )}&page=${page}&limit=${limit}`
+        )}&page=${page}&limit=${limit}`,
+        {
+          cache: 'force-cache',
+          next: {
+            revalidate: 60
+          }
+        }
       );
 
       const data: BaseAPIResponse<
@@ -115,6 +121,10 @@ export function useGetDesainerById() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
+        },
+        cache: 'force-cache',
+        next: {
+          revalidate: 60
         }
       });
 

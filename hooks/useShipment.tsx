@@ -36,7 +36,13 @@ export function useGetAllShipments() {
       const response = await fetch(
         `/api/shipment?searchQuery=${encodeURIComponent(
           searchQuery
-        )}&page=${page}&limit=${limit}`
+        )}&page=${page}&limit=${limit}`,
+        {
+          cache: 'force-cache',
+          next: {
+            revalidate: 60
+          }
+        }
       );
 
       const data: BaseAPIResponse<
@@ -115,6 +121,10 @@ export function useGetShipmentById() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
+        },
+        cache: 'force-cache',
+        next: {
+          revalidate: 60
         }
       });
 

@@ -32,7 +32,13 @@ export function useGetAllLearning() {
       const response = await fetch(
         `/api/learning?searchQuery=${encodeURIComponent(
           searchQuery
-        )}&page=${page}&limit=${limit}`
+        )}&page=${page}&limit=${limit}`,
+        {
+          cache: 'force-cache',
+          next: {
+            revalidate: 60
+          }
+        }
       );
       const data = await response.json();
 
@@ -107,6 +113,10 @@ export function useGetLearningById() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
+        },
+        cache: 'force-cache',
+        next: {
+          revalidate: 60
         }
       });
 

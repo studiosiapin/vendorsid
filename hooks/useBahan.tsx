@@ -34,7 +34,13 @@ export function useGetAllBahan() {
       const response = await fetch(
         `/api/bahan?searchQuery=${encodeURIComponent(
           searchQuery
-        )}&page=${page}&limit=${limit}`
+        )}&page=${page}&limit=${limit}`,
+        {
+          cache: 'force-cache',
+          next: {
+            revalidate: 60
+          }
+        }
       );
 
       const data: BaseAPIResponse<
@@ -79,7 +85,11 @@ export function useCreateBahan() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ ...bahanData, imageUrl })
+        body: JSON.stringify({ ...bahanData, imageUrl }),
+        cache: 'force-cache',
+        next: {
+          revalidate: 60
+        }
       });
 
       const data = await response.json();
@@ -114,6 +124,10 @@ export function useGetBahanById() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
+        },
+        cache: 'force-cache',
+        next: {
+          revalidate: 60
         }
       });
 

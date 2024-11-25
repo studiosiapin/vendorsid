@@ -74,7 +74,11 @@ export function useCreateOrder() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify(orderData),
+        cache: 'force-cache',
+        next: {
+          revalidate: 60
+        }
       });
 
       const data = await response.json();
@@ -105,7 +109,12 @@ export function useGetOrderById() {
   const getOrderById = async (orderId: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/order/${orderId}`);
+      const response = await fetch(`/api/order/${orderId}`, {
+        cache: 'force-cache',
+        next: {
+          revalidate: 60
+        }
+      });
 
       const data = await response.json();
 
@@ -218,7 +227,12 @@ export function useOrderProgress() {
   const getOrderProgress = async (orderId: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/order/${orderId}/tracking`);
+      const response = await fetch(`/api/order/${orderId}/tracking`, {
+        cache: 'force-cache',
+        next: {
+          revalidate: 60
+        }
+      });
 
       const data = await response.json();
 

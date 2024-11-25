@@ -16,7 +16,11 @@ export const useStatistics = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ startDate, endDate })
+        body: JSON.stringify({ startDate, endDate }),
+        cache: 'force-cache',
+        next: {
+          revalidate: 60
+        }
       });
 
       if (!response.ok) {
@@ -26,6 +30,7 @@ export const useStatistics = () => {
       const data = await response.json();
       return data;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
       return null; // Return null or handle the error as needed
     } finally {

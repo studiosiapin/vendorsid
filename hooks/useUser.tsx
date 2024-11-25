@@ -33,7 +33,13 @@ export function useGetAllUsers() {
       const response = await fetch(
         `/api/user?searchQuery=${encodeURIComponent(
           searchQuery
-        )}&page=${page}&limit=${limit}&gender=${gender}`
+        )}&page=${page}&limit=${limit}&gender=${gender}`,
+        {
+          cache: 'force-cache',
+          next: {
+            revalidate: 60
+          }
+        }
       );
 
       const data: BaseAPIResponse<
@@ -111,6 +117,10 @@ export function useGetUserById() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
+        },
+        cache: 'force-cache',
+        next: {
+          revalidate: 60
         }
       });
 
