@@ -85,13 +85,13 @@ export default function OrderForm() {
     if (!formData.linkLayout) newErrors.linkLayout = 'Foto Layout is required';
     if (!formData.linkSharedrive)
       newErrors.linkSharedrive = 'Link Sharedrive is required';
-    if (!formData.startAt) newErrors.startAt = 'Start At is required';
-    if (!formData.finishAt) newErrors.finishAt = 'Finish At is required';
-    if (!formData.totalAmount)
-      newErrors.totalAmount = 'Total Amount is required';
-    if (!formData.dpAmount) newErrors.dpAmount = 'DP Amount is required';
-    if (formData.dpAmount > formData.totalAmount)
-      newErrors.dpAmount = 'DP Amount must be less than Total Amount';
+    // if (!formData.startAt) newErrors.startAt = 'Start At is required';
+    // if (!formData.finishAt) newErrors.finishAt = 'Finish At is required';
+    // if (!formData.totalAmount)
+    //   newErrors.totalAmount = 'Total Amount is required';
+    // if (!formData.dpAmount) newErrors.dpAmount = 'DP Amount is required';
+    // if (formData.dpAmount > formData.totalAmount)
+    //   newErrors.dpAmount = 'DP Amount must be less than Total Amount';
     if (!formData.bahanCode) newErrors.bahanCode = 'Bahan is required';
     if (!formData.jenisCode) newErrors.jenisCode = 'Jenis is required';
 
@@ -218,7 +218,7 @@ export default function OrderForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3 max-md:grid-cols-1">
           <div
             className={`border-b-4 pb-3 ${
               step == 1 ? 'border-orange-500' : ''
@@ -234,6 +234,14 @@ export default function OrderForm() {
           >
             <div className="text-xs font-semibold text-orange-500">Step 2 </div>
             <div className="text-md">Ukuran</div>
+          </div>
+          <div
+            className={`border-b-4 pb-3 ${
+              step == 3 ? 'border-orange-500' : ''
+            }`}
+          >
+            <div className="text-xs font-semibold text-orange-500">Step 3 </div>
+            <div className="text-md">Biaya</div>
           </div>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-5 py-5">
@@ -289,58 +297,6 @@ export default function OrderForm() {
               {errors.linkSharedrive && (
                 <p className="text-sm text-red-500">{errors.linkSharedrive}</p>
               )}
-              <div className="grid grid-cols-2 gap-5">
-                <div className="flex flex-col gap-3">
-                  <p>Mulai Pesanan</p>
-                  <Input
-                    name="startAt"
-                    value={formData.startAt}
-                    onChange={handleChange}
-                    placeholder="Start At"
-                    type="date"
-                  />
-                  {errors.startAt && (
-                    <p className="text-sm text-red-500">{errors.startAt}</p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-3">
-                  <p>Selesai Pesanan</p>
-                  <Input
-                    name="finishAt"
-                    value={formData.finishAt}
-                    onChange={handleChange}
-                    placeholder="Finish At"
-                    type="date"
-                  />
-                  {errors.finishAt && (
-                    <p className="text-sm text-red-500">{errors.finishAt}</p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-3">
-                  <p>Total Pesanan</p>
-                  <CurrencyInput
-                    name="totalAmount"
-                    value={formData.totalAmount.toString()}
-                    onChange={handleChange}
-                    placeholder="Masukan Total Pesanan"
-                  />
-                  {errors.totalAmount && (
-                    <p className="text-sm text-red-500">{errors.totalAmount}</p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-3">
-                  <p>Total DP</p>
-                  <CurrencyInput
-                    name="dpAmount"
-                    value={formData.dpAmount.toString()}
-                    onChange={handleChange}
-                    placeholder="Masukan Total DP"
-                  />
-                  {errors.dpAmount && (
-                    <p className="text-sm text-red-500">{errors.dpAmount}</p>
-                  )}
-                </div>
-              </div>
 
               <p>Pilih Bahan</p>
               <Select
@@ -514,6 +470,79 @@ export default function OrderForm() {
               <div className="grid grid-cols-2 gap-3">
                 <Button
                   onClick={() => setStep(1)}
+                  type="button"
+                  className="mt-3"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={() => setStep(3)}
+                  type="button"
+                  className="mt-3"
+                >
+                  Next
+                </Button>
+              </div>
+            </>
+          )}
+
+          {step === 3 && (
+            <>
+              <div className="grid grid-cols-2 gap-5">
+                <div className="flex flex-col gap-3">
+                  <p>Mulai Pesanan</p>
+                  <Input
+                    name="startAt"
+                    value={formData.startAt}
+                    onChange={handleChange}
+                    placeholder="Start At"
+                    type="date"
+                  />
+                  {errors.startAt && (
+                    <p className="text-sm text-red-500">{errors.startAt}</p>
+                  )}
+                </div>
+                <div className="flex flex-col gap-3">
+                  <p>Selesai Pesanan</p>
+                  <Input
+                    name="finishAt"
+                    value={formData.finishAt}
+                    onChange={handleChange}
+                    placeholder="Finish At"
+                    type="date"
+                  />
+                  {errors.finishAt && (
+                    <p className="text-sm text-red-500">{errors.finishAt}</p>
+                  )}
+                </div>
+                <div className="flex flex-col gap-3">
+                  <p>Total Pesanan</p>
+                  <CurrencyInput
+                    name="totalAmount"
+                    value={formData.totalAmount.toString()}
+                    onChange={handleChange}
+                    placeholder="Masukan Total Pesanan"
+                  />
+                  {errors.totalAmount && (
+                    <p className="text-sm text-red-500">{errors.totalAmount}</p>
+                  )}
+                </div>
+                <div className="flex flex-col gap-3">
+                  <p>Total DP</p>
+                  <CurrencyInput
+                    name="dpAmount"
+                    value={formData.dpAmount.toString()}
+                    onChange={handleChange}
+                    placeholder="Masukan Total DP"
+                  />
+                  {errors.dpAmount && (
+                    <p className="text-sm text-red-500">{errors.dpAmount}</p>
+                  )}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  onClick={() => setStep(2)}
                   type="button"
                   className="mt-3"
                 >
