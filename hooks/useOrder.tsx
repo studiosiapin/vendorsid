@@ -17,12 +17,12 @@ export interface orderFormDataType {
   linkSharedrive: string;
   totalAmount: number;
   dpAmount: number;
-  settlementAmount: number;
+  settlementAmount: number | null;
   bahanCode: string;
   jenisCode: string;
-  shipmentCode: string;
+  shipmentCode: string | null;
   createdBy: string;
-  proofDp: string;
+  proofDp: string | null;
   orderDetails: OrderDetail[];
 }
 

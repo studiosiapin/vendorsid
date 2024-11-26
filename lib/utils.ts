@@ -57,7 +57,7 @@ export function slugify(text: string): string {
 // YYYY-MM-DD to 10 June, 2022
 export function formatDate(date: string | Date | null): string {
   if (!date) {
-    return '';
+    return 'Not set';
   }
   return new Date(date).toLocaleDateString('id-ID', {
     day: 'numeric',

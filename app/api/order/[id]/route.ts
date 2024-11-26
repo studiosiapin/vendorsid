@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Order } from '@prisma/client';
+import { Order, Shipment } from '@prisma/client';
 import { BaseAPIResponse } from '@/types/common';
 import { orderFormDataType } from '@/hooks/useOrder';
 import prisma from '@/server/db';
+
+interface ExtendedOrderFormDataType extends orderFormDataType {
+  startAt: string | null | undefined;
+  finishAt: string | null | undefined;
+  shipments: Shipment | null;
+}
 
 // Get Order by ID
 export async function GET(
@@ -32,6 +38,8 @@ export async function GET(
         updatedAt: true,
         bahanCode: true,
         jenisCode: true,
+        shipmentCode: true,
+        proofDp: true,
         settlementAmount: true,
         linkTracking: true,
         createdBy: true,
@@ -54,8 +62,19 @@ export async function GET(
             id: true,
             name: true
           }
+        },
+        shipments: {
+          select: {
+            id: true,
+            code: true,
+            logo: true,
+            description: true,
+            title: true,
+            createdAt: true,
+            updatedAt: true,
+            deletedAt: true
+          }
         }
-        // Add any other fields that you want to return
       }
     });
 
@@ -69,14 +88,18 @@ export async function GET(
       );
     }
 
-    const response: BaseAPIResponse<orderFormDataType> = {
+    const response: BaseAPIResponse<ExtendedOrderFormDataType> = {
       message: 'Order found',
       code: 200,
       data: {
         ...order,
         orderDetails: order.OrderDetail,
-        startAt: new Date(order.startAt).toISOString().split('T')[0],
-        finishAt: new Date(order.finishAt).toISOString().split('T')[0]
+        startAt: order.startAt
+          ? new Date(order.startAt).toISOString().split('T')[0]
+          : null,
+        finishAt: order.finishAt
+          ? new Date(order.finishAt).toISOString().split('T')[0]
+          : null
       }
     };
 
