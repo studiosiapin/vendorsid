@@ -204,19 +204,14 @@ export default function JenisForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Harga</FormLabel>
-                    {field.value && (
-                      <CurrencyInput
-                        placeholder="Enter harga"
-                        {...field}
-                        value={field.value ? field.value.toString() : ''}
-                        onChange={(e) => {
-                          form.setValue(
-                            'harga',
-                            rupiahToNumber(e.target.value)
-                          );
-                        }}
-                      />
-                    )}
+                    <CurrencyInput
+                      placeholder="Enter harga"
+                      {...field}
+                      value={field.value ? field.value.toString() : ''}
+                      onChange={(e) => {
+                        form.setValue('harga', rupiahToNumber(e.target.value));
+                      }}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

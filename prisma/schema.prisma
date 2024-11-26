@@ -101,31 +101,40 @@ model User {
 }
 
 model Order {
-  id               String      @id @default(uuid())
-  title            String
-  invoiceId        String      @map("invoice_id")
-  description      String
-  linkMockup       String      @map("link_mockup")
-  linkCollar       String      @map("link_collar")
-  linkLayout       String      @map("link_layout")
-  linkSharedrive   String      @map("link_sharedrive")
-  startAt          DateTime    @map("start_at")
-  finishAt         DateTime    @map("finish_at")
-  totalAmount      Float       @map("total_amount")
-  dpAmount         Float       @map("dp_amount")
-  status           OrderStatus
-  bahanCode        String      @map("bahan_code")
-  jenisCode        String      @map("jenis_code")
-  settlementAmount Float       @map("settlement_amount")
-  linkTracking     String?     @map("link_tracking")
-  createdBy        String      @map("created_by")
-  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt        DateTime?   @map("deleted_at") @db.Timestamptz
+  id             String      @id @default(uuid())
+  title          String
+  invoiceId      String      @map("invoice_id")
+  description    String
+  linkMockup     String      @map("link_mockup")
+  linkCollar     String      @map("link_collar")
+  linkLayout     String      @map("link_layout")
+  linkSharedrive String      @map("link_sharedrive")
+  startAt        DateTime?   @map("start_at")
+  finishAt       DateTime?   @map("finish_at")
+  totalAmount    Float       @map("total_amount")
+  dpAmount       Float       @map("dp_amount")
+  status         OrderStatus
+  bahanCode      String      @map("bahan_code")
+  jenisCode      String      @map("jenis_code")
 
-  user          User            @relation("UserOrders", fields: [createdBy], references: [id])
-  bahan         Bahan           @relation(fields: [bahanCode], references: [code])
-  jenis         Jenis           @relation(fields: [jenisCode], references: [code])
+  shipmentCode     String? @default("JNE") @map("shipment_code")
+  shipmentAddress  String? @map("shipment_address")
+  settlementAmount Float?  @map("settlement_amount")
+  linkTracking     String? @map("link_tracking")
+
+  proofDp         String? @map("proof_dp")
+  proofSettlement String? @map("proof_settlement")
+
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+
+  user      User      @relation("UserOrders", fields: [createdBy], references: [id])
+  bahan     Bahan     @relation(fields: [bahanCode], references: [code])
+  jenis     Jenis     @relation(fields: [jenisCode], references: [code])
+  shipments Shipment? @relation(fields: [shipmentCode], references: [code])
+
   OrderDetail   OrderDetail[]
   OrderProgress OrderProgress[]
 
@@ -170,6 +179,7 @@ model Shipment {
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt   DateTime? @map("deleted_at") @db.Timestamptz
+  Order       Order[]
 
   @@map("shipments")
 }

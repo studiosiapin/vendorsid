@@ -15,14 +15,14 @@ export interface orderFormDataType {
   linkCollar: string;
   linkLayout: string;
   linkSharedrive: string;
-  startAt: string; // dapat menggunakan Date jika ingin lebih terstruktur
-  finishAt: string; // dapat menggunakan Date jika ingin lebih terstruktur
   totalAmount: number;
   dpAmount: number;
   settlementAmount: number;
   bahanCode: string;
   jenisCode: string;
+  shipmentCode: string;
   createdBy: string;
+  proofDp: string;
   orderDetails: OrderDetail[];
 }
 

@@ -13,12 +13,14 @@ export async function POST(req: NextRequest) {
       linkCollar,
       linkLayout,
       linkSharedrive,
-      startAt,
-      finishAt,
       totalAmount,
       dpAmount,
+      startAt,
+      finishAt,
+      proofDp,
       bahanCode,
       jenisCode,
+      shipmentCode,
       createdBy,
       orderDetails // Expecting an array of order detail objects
     } = await req.json();
@@ -47,14 +49,17 @@ export async function POST(req: NextRequest) {
         linkCollar,
         linkLayout,
         linkSharedrive,
-        startAt,
-        finishAt,
         totalAmount,
         dpAmount,
+        proofDp,
+        startAt,
+        finishAt,
         settlementAmount: 0,
         status: OrderStatus.REQUESTED,
         bahanCode,
         jenisCode,
+        shipmentCode,
+
         createdBy,
         OrderDetail: {
           createMany: {

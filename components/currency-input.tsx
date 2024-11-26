@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from './ui/input';
 
 interface CurrencyInputProps {
@@ -36,19 +36,26 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
     return formatted ? 'Rp ' + formatted : '';
   };
 
+  useEffect(() => {
+    handleChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
   return (
-    <Input
-      name={name}
-      value={formData.totalAmount}
-      onChange={handleChange}
-      placeholder={placeholder}
-      type="text"
-      onKeyPress={(event) => {
-        if (!/[0-9]/.test(event.key)) {
-          event.preventDefault();
-        }
-      }}
-    />
+    <>
+      <Input
+        name={name}
+        value={formData.totalAmount}
+        onChange={handleChange}
+        placeholder={placeholder}
+        type="text"
+        onKeyPress={(event) => {
+          if (!/[0-9]/.test(event.key)) {
+            event.preventDefault();
+          }
+        }}
+      />
+    </>
   );
 };
 
