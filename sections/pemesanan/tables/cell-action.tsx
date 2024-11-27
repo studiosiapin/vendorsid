@@ -75,14 +75,13 @@ export const OrderCellAction: React.FC<OrderCellActionProps> = ({
             <Eye className="mr-2 h-4 w-4" /> View
           </DropdownMenuItem>
 
-          {data.status === 'REQUESTED' ||
-            (isAdmin(session?.user.role || '') && (
-              <DropdownMenuItem
-                onClick={() => router.push(`/dashboard/pemesanan/${data.id}`)}
-              >
-                <Edit className="mr-2 h-4 w-4" /> Update
-              </DropdownMenuItem>
-            ))}
+          {data.status === 'REQUESTED' && (
+            <DropdownMenuItem
+              onClick={() => router.push(`/dashboard/pemesanan/${data.id}`)}
+            >
+              <Edit className="mr-2 h-4 w-4" /> Update
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>

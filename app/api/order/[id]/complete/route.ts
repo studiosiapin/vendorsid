@@ -12,7 +12,8 @@ export async function POST(
     // Get the order id from the params
     const { id } = params;
 
-    const { linkProgress, userId, settlementAmount } = await req.json();
+    const { linkProgress, userId, settlementAmount, proofSettlement } =
+      await req.json();
 
     // create prisma transaction
     const transaction = await prisma.$transaction([
@@ -23,7 +24,8 @@ export async function POST(
         },
         data: {
           settlementAmount,
-          status: OrderStatus.COMPLETED
+          status: OrderStatus.COMPLETED,
+          proofSettlement: proofSettlement || null
         }
       }),
 

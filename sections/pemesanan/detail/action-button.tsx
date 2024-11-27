@@ -1,4 +1,5 @@
 import CurrencyInput from '@/components/currency-input';
+import SupabaseImageUploader from '@/components/supabase-image-uploader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -19,6 +20,7 @@ import { CircleX } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 
 interface ActionButtonsProps {
   order: Order & {
@@ -50,7 +52,10 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
   const [isPacking, setIsPacking] = useState<boolean>(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
   const [settlementAmount, setSettlementAmount] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [shipmentCost, setShipmentCost] = useState('');
+  const [shipmentLink, setShipmentLink] = useState('');
+  const [proofSettlement, setProofSettlement] = useState('');
+  const [errorMsg, setErrorMsg] = useState<{ [key: string]: string }>({});
   const remainingPayment = order.totalAmount - order.dpAmount;
 
   const { isLoading: isUpdating, updateOrderStatus } = useUpdateOrderStatus();
@@ -59,47 +64,78 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
 
   const handleUpdateOrderStatus = async (
     status: OrderStatus,
-    linkProgress: string | null
+    linkProgress: string | null,
+    shipmentLink?: string | null,
+    shipmentCost?: number | null
   ) => {
-    // modal konfirmasi
-    const conf = confirm(
-      `Apakah anda yakin ingin mengubah status pesanan ke ${status}?`
-    );
-    if (!conf) return;
-    if (order) {
-      try {
-        await updateOrderStatus(
-          order.id,
-          status,
-          linkProgress,
-          session.data?.user.id || null
-        );
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error updating order status:', error);
-      } finally {
-        onUpdated();
+    Swal.fire({
+      title: 'Konfirmasi',
+      text: `Apakah anda yakin ingin mengubah status pesanan ke ${status}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Tidak'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        if (order) {
+          try {
+            await updateOrderStatus(
+              order.id,
+              status,
+              linkProgress,
+              session.data?.user.id || null,
+              shipmentLink,
+              shipmentCost
+            );
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error('Error updating order status:', error);
+          } finally {
+            onUpdated();
+          }
+        }
       }
-    }
+    });
   };
 
   const handleFinishOrder = async () => {
     const settlementAmountParse = parseInt(settlementAmount.replace(/\D/g, ''));
     if (!settlementAmount) {
-      setErrorMsg('Mohon isi jumlah pembayaran');
+      setErrorMsg((prev) => ({
+        ...prev,
+        settlementAmount: 'Mohon isi jumlah pembayaran'
+      }));
       return;
     }
 
     if (settlementAmountParse === 0 || isNaN(settlementAmountParse)) {
-      setErrorMsg('Nominal pelunasan harus diisi');
+      setErrorMsg((prev) => ({
+        ...prev,
+        settlementAmount: 'Nominal pelunasan harus diisi'
+      }));
       return;
     }
     if (settlementAmountParse < remainingPayment) {
-      setErrorMsg('Nominal pelunasan tidak boleh kurang dari sisa pembayaran');
+      setErrorMsg((prev) => ({
+        ...prev,
+        settlementAmount:
+          'Nominal pelunasan tidak boleh kurang dari sisa pembayaran'
+      }));
       return;
     }
     if (settlementAmountParse > remainingPayment) {
-      setErrorMsg('Nominal pelunasan tidak boleh lebih dari sisa pembayaran');
+      setErrorMsg((prev) => ({
+        ...prev,
+        settlementAmount:
+          'Nominal pelunasan tidak boleh lebih dari sisa pembayaran'
+      }));
+      return;
+    }
+    if (!proofSettlement) {
+      setErrorMsg((prev) => ({
+        ...prev,
+        proofSettlement: 'Mohon upload bukti transfer'
+      }));
       return;
     }
     if (!session.data) return;
@@ -113,7 +149,8 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
           order.id,
           linkProgress,
           session.data?.user.id,
-          settlementAmountParse
+          settlementAmountParse,
+          proofSettlement
         );
 
         closeModal();
@@ -165,6 +202,35 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
       }
     }
   }, [session]);
+
+  function validateWaitSettlement() {
+    if (shipmentCost === '')
+      setErrorMsg((prev) => ({
+        ...prev,
+        shipmentCost: 'Mohon isi biaya pengiriman'
+      }));
+    if (shipmentLink === '')
+      setErrorMsg((prev) => ({
+        ...prev,
+        shipmentLink: 'Mohon isi link pengiriman'
+      }));
+
+    return shipmentCost !== '' && shipmentLink !== '';
+  }
+
+  function handleShipmentOrder(): void {
+    const isValid = validateWaitSettlement();
+    console.debug('isValid', isValid);
+    if (isValid) {
+      handleUpdateOrderStatus(
+        selectedStatus as OrderStatus,
+        linkProgress,
+        shipmentLink,
+        Number(shipmentCost.replace(/\D/g, ''))
+      );
+      closeModal();
+    }
+  }
 
   return (
     <div className="mt-5 flex justify-end gap-3">
@@ -220,20 +286,34 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
 
       {/* APPROVED STEP */}
       {order.status === 'APPROVED' && isAdmin && (
-        <Button
-          disabled={isUpdating}
-          onClick={() => {
-            setSelectedStatus('PROOFING');
-            setShowModal(true);
-          }}
-        >
-          Upload Proofing
-        </Button>
+        <>
+          <Link href={`/order/${order.id}`}>
+            <Button disabled={isUpdating} variant="secondary">
+              Edit Pesanan
+            </Button>
+          </Link>
+          <Button
+            disabled={isUpdating}
+            onClick={() => {
+              setSelectedStatus('PROOFING');
+              setShowModal(true);
+            }}
+          >
+            Upload Proofing
+          </Button>
+        </>
       )}
 
       {/* PROOFING STEP */}
       {order.status === 'PROOFING' && (isReseller || isAdmin) && (
         <>
+          {isAdmin && (
+            <Link href={`/order/${order.id}`}>
+              <Button disabled={isUpdating} variant="secondary">
+                Edit Pesanan
+              </Button>
+            </Link>
+          )}
           <Button
             disabled={isUpdating}
             onClick={() => {
@@ -256,80 +336,134 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
 
       {/* PROOFING_APPROVED STEP */}
       {order.status === 'PROOFING_APPROVED' && (isDesainSetting || isAdmin) && (
-        <Button
-          disabled={isUpdating}
-          onClick={() => {
-            setSelectedStatus('DESAIN_SETTING');
-            setShowModal(true);
-          }}
-        >
-          Upload Progress
-        </Button>
+        <>
+          {isAdmin && (
+            <Link href={`/order/${order.id}`}>
+              <Button disabled={isUpdating} variant="secondary">
+                Edit Pesanan
+              </Button>
+            </Link>
+          )}
+          <Button
+            disabled={isUpdating}
+            onClick={() => {
+              setSelectedStatus('DESAIN_SETTING');
+              setShowModal(true);
+            }}
+          >
+            Upload Progress
+          </Button>
+        </>
       )}
 
       {/* DESAIN_SETTING STEP */}
       {order.status === 'DESAIN_SETTING' && (isPrinting || isAdmin) && (
-        <Button
-          disabled={isUpdating}
-          onClick={() => {
-            setSelectedStatus('PRINTING');
-            setShowModal(true);
-          }}
-        >
-          Upload Progress
-        </Button>
+        <>
+          {isAdmin && (
+            <Link href={`/order/${order.id}`}>
+              <Button disabled={isUpdating} variant="secondary">
+                Edit Pesanan
+              </Button>
+            </Link>
+          )}
+          <Button
+            disabled={isUpdating}
+            onClick={() => {
+              setSelectedStatus('PRINTING');
+              setShowModal(true);
+            }}
+          >
+            Upload Progress
+          </Button>
+        </>
       )}
 
       {/* PRINTING STEP */}
       {order.status === 'PRINTING' && (isPressing || isAdmin) && (
-        <Button
-          disabled={isUpdating}
-          onClick={() => {
-            setSelectedStatus('PRESSING');
-            setShowModal(true);
-          }}
-        >
-          Upload Progress
-        </Button>
+        <>
+          {isAdmin && (
+            <Link href={`/order/${order.id}`}>
+              <Button disabled={isUpdating} variant="secondary">
+                Edit Pesanan
+              </Button>
+            </Link>
+          )}
+          <Button
+            disabled={isUpdating}
+            onClick={() => {
+              setSelectedStatus('PRESSING');
+              setShowModal(true);
+            }}
+          >
+            Upload Progress
+          </Button>
+        </>
       )}
 
       {/* PRESSING STEP */}
       {order.status === 'PRESSING' && (isSewing || isAdmin) && (
-        <Button
-          disabled={isUpdating}
-          onClick={() => {
-            setSelectedStatus('SEWING');
-            setShowModal(true);
-          }}
-        >
-          Upload Progress
-        </Button>
+        <>
+          {isAdmin && (
+            <Link href={`/order/${order.id}`}>
+              <Button disabled={isUpdating} variant="secondary">
+                Edit Pesanan
+              </Button>
+            </Link>
+          )}
+          <Button
+            disabled={isUpdating}
+            onClick={() => {
+              setSelectedStatus('SEWING');
+              setShowModal(true);
+            }}
+          >
+            Upload Progress
+          </Button>
+        </>
       )}
 
       {/* SEWING STEP */}
       {order.status === 'SEWING' && (isPacking || isAdmin) && (
-        <Button
-          disabled={isUpdating}
-          onClick={() => {
-            setSelectedStatus('PACKING');
-            setShowModal(true);
-          }}
-        >
-          Upload Progress
-        </Button>
+        <>
+          {isAdmin && (
+            <Link href={`/order/${order.id}`}>
+              <Button disabled={isUpdating} variant="secondary">
+                Edit Pesanan
+              </Button>
+            </Link>
+          )}
+          <Button
+            disabled={isUpdating}
+            onClick={() => {
+              setSelectedStatus('PACKING');
+              setShowModal(true);
+            }}
+          >
+            Upload Progress
+          </Button>
+        </>
       )}
 
       {/* PACKING STEP */}
       {order.status === 'PACKING' && isAdmin && (
-        <Button
-          disabled={isUpdating}
-          onClick={() => {
-            setSelectedStatus('WAITING_SETTLEMENT');
-            setShowModal(true);
-          }}
-        >
-          Upload Progress
-        </Button>
+        <>
+          {isAdmin && (
+            <Link href={`/order/${order.id}`}>
+              <Button disabled={isUpdating} variant="secondary">
+                Edit Pesanan
+              </Button>
+            </Link>
+          )}
+          <Button
+            disabled={isUpdating}
+            onClick={() => {
+              setSelectedStatus('WAITING_SETTLEMENT');
+              setShowModal(true);
+            }}
+          >
+            Upload Progress
+          </Button>
+        </>
       )}
 
       {/* WAITING_SETTLEMENT STEP */}
@@ -351,7 +485,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
             className="fixed left-0 top-0 z-[99] h-screen w-screen bg-black/80"
             onClick={() => closeModal()}
           ></div>
-          <div className="fixed left-[50%] top-[50%] z-[100] w-full max-w-screen-sm translate-x-[-50%] translate-y-[-50%] rounded-md bg-white p-5 dark:bg-zinc-900 max-md:w-[90%]">
+          <div className="fixed left-[50%] top-[50%] z-[100] max-h-[90vh] w-full max-w-screen-sm translate-x-[-50%] translate-y-[-50%] overflow-y-auto overflow-x-hidden rounded-md bg-white p-5 dark:bg-zinc-900 max-md:w-[90%]">
             <div className="relative text-2xl font-semibold">
               Update Progress Pesanan
               <div className="absolute -right-12 -top-12 aspect-square cursor-pointer rounded-full bg-white p-1 dark:bg-zinc-900 max-md:-right-10">
@@ -441,6 +575,33 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
                 onChange={(e) => setLinkProgress(e.target.value)}
               />
 
+              {order.status === 'PACKING' && (
+                <>
+                  <p>Link Pengiriman</p>
+                  <Input
+                    type="text"
+                    value={shipmentLink}
+                    onChange={(e) => setShipmentLink(e.target.value)}
+                  />
+                  {errorMsg.shipmentLink && (
+                    <p className="text-sm text-red-500">
+                      {errorMsg.shipmentLink}
+                    </p>
+                  )}
+                  <p>Biaya Pengiriman</p>
+                  <CurrencyInput
+                    name="shipmentCost"
+                    value={shipmentCost.toString()}
+                    onChange={(e) => setShipmentCost(e.target.value)}
+                  />
+                  {errorMsg.shipmentCost && (
+                    <p className="text-sm text-red-500">
+                      {errorMsg.shipmentCost}
+                    </p>
+                  )}
+                </>
+              )}
+
               {order.status === 'WAITING_SETTLEMENT' && (
                 <>
                   <div className="grid grid-cols-[1fr_150px] gap-2 text-right">
@@ -460,9 +621,18 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
                     value={settlementAmount.toString()}
                     onChange={(e) => setSettlementAmount(e.target.value)}
                   />
-                  {errorMsg && (
-                    <p className="text-sm text-red-500">{errorMsg}</p>
+                  {errorMsg.settlementAmount && (
+                    <p className="text-sm text-red-500">
+                      {errorMsg.settlementAmount}
+                    </p>
                   )}
+                  <SupabaseImageUploader
+                    name="Bukti Transfer Pelunasan"
+                    initialUrl={proofSettlement || ''}
+                    onUpload={(url) => setProofSettlement(url)}
+                    errMessage={errorMsg.proofSettlement}
+                    imageClass="max-h-[400px] w-max mx-auto"
+                  />
                 </>
               )}
             </div>
@@ -472,7 +642,11 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
                 Cancel
               </Button>
 
-              {order.status !== 'WAITING_SETTLEMENT' ? (
+              {order.status === 'PACKING' ? (
+                <Button onClick={() => handleShipmentOrder()}>
+                  Update Pesanan
+                </Button>
+              ) : order.status !== 'WAITING_SETTLEMENT' ? (
                 <Button
                   onClick={() => {
                     handleUpdateOrderStatus(

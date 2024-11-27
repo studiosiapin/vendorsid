@@ -181,7 +181,9 @@ export function useUpdateOrderStatus() {
     orderId: string,
     status: string,
     linkProgress: string | null,
-    createdBy: string | null
+    createdBy: string | null,
+    shipmentLink: string | null | undefined,
+    shipmentCost: number | null | undefined
   ) => {
     setIsLoading(true);
     try {
@@ -194,7 +196,9 @@ export function useUpdateOrderStatus() {
           id: orderId,
           status: status,
           linkProgress,
-          createdBy
+          createdBy,
+          shipmentLink,
+          shipmentCost
         })
       });
 
@@ -263,7 +267,8 @@ export function useCompleteOrder() {
     orderId: string,
     linkProgress: string,
     userId: string,
-    settlementAmount: number
+    settlementAmount: number,
+    proofSettlement: string | null | undefined
   ) => {
     setIsLoading(true);
     try {
@@ -275,7 +280,8 @@ export function useCompleteOrder() {
         body: JSON.stringify({
           linkProgress,
           userId,
-          settlementAmount
+          settlementAmount,
+          proofSettlement
         })
       });
 

@@ -209,6 +209,40 @@ const DetailPageOrder = () => {
                       </Link>
                     </p>
                   </div>
+                  {order.shipmentCost && (
+                    <div className="">
+                      <p className="text-xs text-zinc-500">Biaya Pengiriman</p>
+                      <p>{formatRupiah(order.shipmentCost)}</p>
+                    </div>
+                  )}
+                  {order.shipmentLink && (
+                    <div className="">
+                      <p className="text-xs text-zinc-500">Link Pengiriman</p>
+                      <p>
+                        <Link
+                          href={order.shipmentLink}
+                          className="text-blue-500 underline"
+                          target="_blank"
+                        >
+                          Lihat
+                        </Link>
+                      </p>
+                    </div>
+                  )}
+                  {order.proofSettlement && (
+                    <div className="">
+                      <p className="text-xs text-zinc-500">Bukti Pelunasan</p>
+                      <div className="flex items-center gap-3">
+                        <p>{formatRupiah(order.settlementAmount || 0)}</p>
+                        <Link
+                          href={order.proofSettlement || ''}
+                          target="_blank"
+                        >
+                          <Button size="sm">Bukti Pelunasan</Button>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
                   <div className="">
                     <p className="text-xs text-zinc-500">Dipesan Oleh</p>
                     <p>{order.user.name}</p>

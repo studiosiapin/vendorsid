@@ -117,8 +117,11 @@ model Order {
   bahanCode      String      @map("bahan_code")
   jenisCode      String      @map("jenis_code")
 
-  shipmentCode     String? @default("JNE") @map("shipment_code")
-  shipmentAddress  String? @map("shipment_address")
+  shipmentCode    String? @default("JNE") @map("shipment_code")
+  shipmentAddress String? @map("shipment_address")
+  shipmentCost    Float?  @map("shipment_cost")
+  shipmentLink    String? @map("shipment_link")
+
   settlementAmount Float?  @map("settlement_amount")
   linkTracking     String? @map("link_tracking")
 

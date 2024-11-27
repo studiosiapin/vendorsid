@@ -6,11 +6,30 @@ import prisma from '@/server/db';
 // update order status
 export async function POST(req: NextRequest) {
   try {
-    const { id, status, linkProgress, createdBy } = await req.json();
+    const { id, status, linkProgress, createdBy, shipmentCost, shipmentLink } =
+      await req.json();
+
+    const totalAmount = await prisma.order.findUnique({
+      where: { id },
+      select: { totalAmount: true }
+    });
 
     const updatedOrder = await prisma.order.update({
       where: { id: id },
-      data: { status: status }
+      data: {
+        status: status,
+        startAt: status === 'PROOFING_APPROVED' ? new Date() : null,
+        finishAt:
+          status === 'PROOFING_APPROVED'
+            ? new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+            : null,
+        shipmentCost: shipmentCost || null,
+        shipmentLink: shipmentLink || null,
+        totalAmount:
+          totalAmount && totalAmount.totalAmount
+            ? totalAmount.totalAmount + shipmentCost
+            : null
+      }
     });
 
     if (updatedOrder && createdBy) {
