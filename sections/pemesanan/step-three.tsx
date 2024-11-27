@@ -110,7 +110,7 @@ export default function StepThree({
         <div className="space-y-3">
           <p>Pilih Pengiriman</p>
           <Select
-            value={formData.shipmentCode}
+            value={formData.shipmentCode || ''}
             onValueChange={(value) => {
               setFormData((prevData) => ({
                 ...prevData,
