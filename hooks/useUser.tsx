@@ -36,13 +36,7 @@ export function useGetAllUsers() {
             const response = await fetch(
                 `/api/user?searchQuery=${encodeURIComponent(
                     searchQuery
-                )}&page=${page}&limit=${limit}&gender=${gender}`,
-                {
-                    cache: 'force-cache',
-                    next: {
-                        revalidate: 60
-                    }
-                }
+                )}&page=${page}&limit=${limit}&gender=${gender}`
             );
 
             const data: BaseAPIResponse<

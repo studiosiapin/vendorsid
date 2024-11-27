@@ -31,13 +31,7 @@ export function useGetAllJenis() {
             const response = await fetch(
                 `/api/jenis?searchQuery=${encodeURIComponent(
                     searchQuery
-                )}&page=${page}&limit=${limit}`,
-                {
-                    cache: 'force-cache',
-                    next: {
-                        revalidate: 60
-                    }
-                }
+                )}&page=${page}&limit=${limit}`
             );
             const data = await response.json();
 

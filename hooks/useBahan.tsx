@@ -36,13 +36,7 @@ export function useGetAllBahan() {
             const response = await fetch(
                 `/api/bahan?searchQuery=${encodeURIComponent(
                     searchQuery
-                )}&page=${page}&limit=${limit}`,
-                {
-                    cache: 'force-cache',
-                    next: {
-                        revalidate: 60
-                    }
-                }
+                )}&page=${page}&limit=${limit}`
             );
 
             const data: BaseAPIResponse<
