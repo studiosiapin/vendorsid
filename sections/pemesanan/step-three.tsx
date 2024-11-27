@@ -147,7 +147,7 @@ export default function StepThree({
 
       <SupabaseImageUploader
         name="Bukti Transfer"
-        initialUrl={formData.proofDp}
+        initialUrl={formData.proofDp || ''}
         onUpload={(url) => handleImageUploaded(url, 'proofDp')}
         errMessage={errors.proofDp}
         imageClass="max-h-[500px] w-max mx-auto"
