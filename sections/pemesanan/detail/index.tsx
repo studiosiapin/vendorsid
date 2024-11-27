@@ -166,7 +166,12 @@ const DetailPageOrder = () => {
                   </div>
                   <div className="">
                     <p className="text-xs text-zinc-500">DP</p>
-                    <p>{formatRupiah(order.dpAmount)}</p>
+                    <div className="flex items-center gap-3">
+                      <p>{formatRupiah(order.dpAmount)}</p>
+                      <Link href={order.proofDp || ''} target="_blank">
+                        <Button size="sm">Bukti DP</Button>
+                      </Link>
+                    </div>
                   </div>
                   {/* <div className="">
                     <p className="text-xs text-zinc-500">Settlement</p>

@@ -129,6 +129,9 @@ export async function GET(req: NextRequest, res: NextResponse) {
       take: limit, // Menggunakan limit yang ditentukan
       include: {
         user: true
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     });
 

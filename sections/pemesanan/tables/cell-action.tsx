@@ -9,8 +9,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { isAdmin } from '@/lib/utils';
 import { Order } from '@prisma/client';
 import { Edit, MoreHorizontal, Trash, Eye } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -27,6 +29,7 @@ export const OrderCellAction: React.FC<OrderCellActionProps> = ({
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { data: session } = useSession();
 
   const onConfirm = async () => {
     setLoading(true);
@@ -72,13 +75,14 @@ export const OrderCellAction: React.FC<OrderCellActionProps> = ({
             <Eye className="mr-2 h-4 w-4" /> View
           </DropdownMenuItem>
 
-          {data.status === 'REQUESTED' && (
-            <DropdownMenuItem
-              onClick={() => router.push(`/dashboard/pemesanan/${data.id}`)}
-            >
-              <Edit className="mr-2 h-4 w-4" /> Update
-            </DropdownMenuItem>
-          )}
+          {data.status === 'REQUESTED' ||
+            (isAdmin(session?.user.role || '') && (
+              <DropdownMenuItem
+                onClick={() => router.push(`/dashboard/pemesanan/${data.id}`)}
+              >
+                <Edit className="mr-2 h-4 w-4" /> Update
+              </DropdownMenuItem>
+            ))}
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>
