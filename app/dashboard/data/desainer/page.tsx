@@ -3,16 +3,16 @@ import { ListingPage } from '@/sections/desainer/view';
 import { SearchParams } from 'nuqs/parsers';
 
 type pageProps = {
-  searchParams: SearchParams;
+    searchParams: SearchParams;
 };
 
 export const metadata = {
-  title: 'Dashboard : Desainer'
+    title: 'Dashboard : Desainer'
 };
 
 export default async function Page({ searchParams }: pageProps) {
-  // Allow nested RSCs to access the search params (in a type-safe way)
-  searchParamsCache.parse(searchParams);
+    // Allow nested RSCs to access the search params (in a type-safe way)
+    searchParamsCache.parse(searchParams);
 
-  return <ListingPage />;
+    return <ListingPage />;
 }

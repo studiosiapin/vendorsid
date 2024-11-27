@@ -2,13 +2,13 @@ import { ProfileViewPage } from '@/sections/profile/view';
 import { SearchParams } from 'nuqs/parsers';
 
 type pageProps = {
-  searchParams: SearchParams;
+    searchParams: SearchParams;
 };
 
 export const metadata = {
-  title: 'Dashboard : Profile'
+    title: 'Dashboard : Profile'
 };
 
 export default async function Page({ searchParams }: pageProps) {
-  return <ProfileViewPage />;
+    return <ProfileViewPage />;
 }

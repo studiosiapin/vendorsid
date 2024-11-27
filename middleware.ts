@@ -9,17 +9,20 @@ import { isWorker } from './lib/utils';
 const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
-  if (!req.auth) {
-    const url = req.url.replace(req.nextUrl.pathname, '/');
-    return Response.redirect(url);
-  }
-
-  if (req.nextUrl.pathname === '/dashboard') {
-    if (isWorker(req.auth.user.role as string)) {
-      const url = req.url.replace(req.nextUrl.pathname, '/dashboard/pemesanan');
-      return Response.redirect(url);
+    if (!req.auth) {
+        const url = req.url.replace(req.nextUrl.pathname, '/');
+        return Response.redirect(url);
     }
-  }
+
+    if (req.nextUrl.pathname === '/dashboard') {
+        if (isWorker(req.auth.user.role as string)) {
+            const url = req.url.replace(
+                req.nextUrl.pathname,
+                '/dashboard/pemesanan'
+            );
+            return Response.redirect(url);
+        }
+    }
 });
 
 export const config = { matcher: ['/dashboard/:path*'] };

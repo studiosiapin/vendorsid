@@ -3,17 +3,17 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import EmployeeForm from '../employee-form';
 
 const breadcrumbItems = [
-  { title: 'Dashboard', link: '/dashboard' },
-  { title: 'Employee', link: '/dashboard/employee' },
-  { title: 'Create', link: '/dashboard/employee/create' }
+    { title: 'Dashboard', link: '/dashboard' },
+    { title: 'Employee', link: '/dashboard/employee' },
+    { title: 'Create', link: '/dashboard/employee/create' }
 ];
 
 export default function EmployeeViewPage() {
-  return (
-    <ScrollArea className="h-full">
-      <div className="flex-1 space-y-4 p-8">
-        <EmployeeForm />
-      </div>
-    </ScrollArea>
-  );
+    return (
+        <ScrollArea className="h-full">
+            <div className="flex-1 space-y-4 p-8">
+                <EmployeeForm />
+            </div>
+        </ScrollArea>
+    );
 }

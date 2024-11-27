@@ -7,19 +7,19 @@ import AddButton from '../add-button';
 type OrderListingPage = {};
 
 export default async function ListingPage({}: OrderListingPage) {
-  return (
-    <PageContainer>
-      <div className="space-y-4">
-        <div className="flex items-start justify-between">
-          <Heading
-            title={`Pemesanan`}
-            description="Atur pesanan-pesanan anda"
-          />
-          <AddButton />
-        </div>
-        <Separator />
-        <OrderTable />
-      </div>
-    </PageContainer>
-  );
+    return (
+        <PageContainer>
+            <div className="space-y-4">
+                <div className="flex items-start justify-between">
+                    <Heading
+                        title={`Pemesanan`}
+                        description="Atur pesanan-pesanan anda"
+                    />
+                    <AddButton />
+                </div>
+                <Separator />
+                <OrderTable />
+            </div>
+        </PageContainer>
+    );
 }

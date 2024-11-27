@@ -7,25 +7,25 @@ import Link from 'next/link';
 import React from 'react';
 
 const AddButton = () => {
-  const session = useSession();
-  const isAdmin =
-    session.data?.user.role === 'admin' ||
-    session.data?.user.role === 'super_admin';
+    const session = useSession();
+    const isAdmin =
+        session.data?.user.role === 'admin' ||
+        session.data?.user.role === 'super_admin';
 
-  const isReseller = session.data?.user.role === 'reseller';
-  return (
-    <div className="">
-      {/* isAdmin atau isReseller */}
-      {isAdmin || isReseller ? (
-        <Link
-          href={'/dashboard/pemesanan/create'}
-          className={cn(buttonVariants(), 'text-xs md:text-sm')}
-        >
-          <Plus className="mr-2 h-4 w-4" /> Tambah Baru
-        </Link>
-      ) : null}
-    </div>
-  );
+    const isReseller = session.data?.user.role === 'reseller';
+    return (
+        <div className="">
+            {/* isAdmin atau isReseller */}
+            {isAdmin || isReseller ? (
+                <Link
+                    href={'/dashboard/pemesanan/create'}
+                    className={cn(buttonVariants(), 'text-xs md:text-sm')}
+                >
+                    <Plus className="mr-2 h-4 w-4" /> Tambah Baru
+                </Link>
+            ) : null}
+        </div>
+    );
 };
 
 export default AddButton;
