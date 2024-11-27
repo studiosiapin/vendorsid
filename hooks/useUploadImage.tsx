@@ -20,7 +20,8 @@ const useUploadImage = () => {
     setIsUploading(true);
     setError(null);
 
-    const uniqueFileName = `${Date.now()}-${file.name}`;
+    const fileName = file.name.replace(/[^a-zA-Z0-9]/g, '');
+    const uniqueFileName = `${Date.now()}-${fileName}`;
 
     const { data, error: uploadError } = await supabase.storage
       .from(bucketName)
