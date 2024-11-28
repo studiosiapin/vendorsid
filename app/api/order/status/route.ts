@@ -34,9 +34,9 @@ export async function POST(req: NextRequest) {
                 shipmentCost: shipmentCost || null,
                 shipmentLink: shipmentLink || null,
                 totalAmount:
-                    totalAmount && totalAmount.totalAmount
+                    shipmentCost && totalAmount && totalAmount.totalAmount
                         ? totalAmount.totalAmount + shipmentCost
-                        : null
+                        : totalAmount?.totalAmount
             }
         });
 

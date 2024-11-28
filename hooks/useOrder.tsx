@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 
 // Define the type for order detail
 interface OrderDetail {
@@ -202,10 +203,20 @@ export function useUpdateOrderStatus() {
                 throw new Error(data.error || 'Something went wrong');
             }
 
-            // toast.success(data.message);
+            Swal.fire({
+                title: 'Order Status Updated',
+                text: 'Order status updated successfully',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
             return data; // Return the updated order object returned from API
         } catch (error) {
-            // toast.error('Error updating order status');
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Error updating order status'
+            });
             throw error; // Propagate the error to the caller
         } finally {
             setIsLoading(false);
