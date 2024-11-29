@@ -252,7 +252,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
                             >
                                 Batalkan
                             </Button>
-                            <Link href={`/order/${order.id}`}>
+                            <Link href={`/dashboard/pemesanan/${order.id}`}>
                                 <Button
                                     disabled={isUpdating}
                                     variant="secondary"
@@ -281,7 +281,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
                             >
                                 Batalkan
                             </Button>
-                            <Link href={`/order/${order.id}`}>
+                            <Link href={`/dashboard/pemesanan/${order.id}`}>
                                 <Button
                                     disabled={isUpdating}
                                     variant="secondary"
@@ -297,7 +297,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
             {/* APPROVED STEP */}
             {order.status === 'APPROVED' && isAdmin && (
                 <>
-                    <Link href={`/order/${order.id}`}>
+                    <Link href={`/dashboard/pemesanan/${order.id}`}>
                         <Button disabled={isUpdating} variant="secondary">
                             Edit Pesanan
                         </Button>
@@ -318,7 +318,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
             {order.status === 'PROOFING' && (isReseller || isAdmin) && (
                 <>
                     {isAdmin && (
-                        <Link href={`/order/${order.id}`}>
+                        <Link href={`/dashboard/pemesanan/${order.id}`}>
                             <Button disabled={isUpdating} variant="secondary">
                                 Edit Pesanan
                             </Button>
@@ -349,7 +349,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
                 (isDesainSetting || isAdmin) && (
                     <>
                         {isAdmin && (
-                            <Link href={`/order/${order.id}`}>
+                            <Link href={`/dashboard/pemesanan/${order.id}`}>
                                 <Button
                                     disabled={isUpdating}
                                     variant="secondary"
@@ -374,7 +374,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
             {order.status === 'DESAIN_SETTING' && (isPrinting || isAdmin) && (
                 <>
                     {isAdmin && (
-                        <Link href={`/order/${order.id}`}>
+                        <Link href={`/dashboard/pemesanan/${order.id}`}>
                             <Button disabled={isUpdating} variant="secondary">
                                 Edit Pesanan
                             </Button>
@@ -396,7 +396,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
             {order.status === 'PRINTING' && (isPressing || isAdmin) && (
                 <>
                     {isAdmin && (
-                        <Link href={`/order/${order.id}`}>
+                        <Link href={`/dashboard/pemesanan/${order.id}`}>
                             <Button disabled={isUpdating} variant="secondary">
                                 Edit Pesanan
                             </Button>
@@ -418,7 +418,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
             {order.status === 'PRESSING' && (isSewing || isAdmin) && (
                 <>
                     {isAdmin && (
-                        <Link href={`/order/${order.id}`}>
+                        <Link href={`/dashboard/pemesanan/${order.id}`}>
                             <Button disabled={isUpdating} variant="secondary">
                                 Edit Pesanan
                             </Button>
@@ -440,7 +440,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
             {order.status === 'SEWING' && (isPacking || isAdmin) && (
                 <>
                     {isAdmin && (
-                        <Link href={`/order/${order.id}`}>
+                        <Link href={`/dashboard/pemesanan/${order.id}`}>
                             <Button disabled={isUpdating} variant="secondary">
                                 Edit Pesanan
                             </Button>
@@ -462,7 +462,7 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
             {order.status === 'PACKING' && isAdmin && (
                 <>
                     {isAdmin && (
-                        <Link href={`/order/${order.id}`}>
+                        <Link href={`/dashboard/pemesanan/${order.id}`}>
                             <Button disabled={isUpdating} variant="secondary">
                                 Edit Pesanan
                             </Button>
