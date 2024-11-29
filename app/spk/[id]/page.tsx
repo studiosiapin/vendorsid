@@ -1,7 +1,7 @@
 'use client';
 import { useGetOrderById } from '@/hooks/useOrder';
 import { formatDate } from '@/lib/utils';
-import { OrderResponse } from '@/types/response';
+import { SPKResponse } from '@/types/response';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
@@ -15,7 +15,7 @@ const SPKPage = () => {
     const router = useRouter();
     const { id } = useParams<{ id: string }>();
     const { isLoading: isFetching, getOrderById } = useGetOrderById();
-    const [order, setOrder] = useState<OrderResponse>();
+    const [order, setOrder] = useState<SPKResponse>();
     const spkRef = useRef<HTMLDivElement>(null);
     const [isPrinted, setIsPrinted] = useState(false);
 

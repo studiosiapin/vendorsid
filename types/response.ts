@@ -112,3 +112,65 @@ export interface TopReseller {
         phone: string;
     };
 }
+
+export type SPKResponse = {
+    id: string;
+    title: string;
+    invoiceId: string;
+    description: string;
+    linkMockup: string;
+    linkCollar: string;
+    linkLayout: string;
+    linkSharedrive: string;
+    startAt: string | null;
+    finishAt: string | null;
+    totalAmount: number;
+    dpAmount: number;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    bahanCode: string;
+    jenisCode: string;
+    shipmentCode: string;
+    shipmentCost: number | null;
+    shipmentLink: string | null;
+    proofDp: string;
+    proofSettlement: string | null;
+    settlementAmount: number;
+    linkTracking: string | null;
+    createdBy: string;
+    OrderDetail: Array<{
+        id: string;
+        orderId: string;
+        quantity: number;
+        ukuranId: string;
+        ukuran: {
+            id: string;
+            name: string;
+        };
+    }>;
+    user: {
+        id: string;
+        name: string;
+    };
+    shipments: {
+        id: string;
+        code: string;
+        logo: string;
+        description: string;
+        title: string;
+        createdAt: string;
+        updatedAt: string;
+        deletedAt: string | null;
+    };
+    orderDetails: Array<{
+        id: string;
+        orderId: string;
+        quantity: number;
+        ukuranId: string;
+        ukuran: {
+            id: string;
+            name: string;
+        };
+    }>;
+};
