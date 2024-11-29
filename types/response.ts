@@ -1,37 +1,66 @@
 import { OrderStatus } from '@prisma/client';
 
-export interface OrderResponse {
+// Tipe untuk User
+type UserType = {
     id: string;
-    invoiceId: string;
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+    phone: string;
+    gender: string;
+    picture: string | null;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+};
+
+// Tipe untuk Transaction
+export type OrderType = {
+    id: string;
     title: string;
+    invoiceId: string;
     description: string;
     linkMockup: string;
     linkCollar: string;
     linkLayout: string;
     linkSharedrive: string;
-    linkTracking: string;
-    bahanCode: string;
-    status: OrderStatus;
+    startAt: string | null;
+    finishAt: string | null;
     totalAmount: number;
     dpAmount: number;
+    status: OrderStatus;
+    bahanCode: string;
+    jenisCode: string;
+    shipmentCode: string;
+    shipmentAddress: string | null;
+    shipmentCost: number | null;
+    shipmentLink: string | null;
     settlementAmount: number;
-    startAt: Date;
-    finishAt: Date;
-    createdAt: Date;
-    updatedAt: Date;
-    user: {
-        id: string;
-        name: string;
-    };
-    orderDetails: {
-        ukuranId: string;
-        quantity: number;
-        ukuran: {
-            id: string;
-            name: string;
-        };
-    }[];
-}
+    linkTracking: string | null;
+    proofDp: string | null;
+    proofSettlement: string | null;
+    createdBy: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+    user: UserType;
+};
+
+// Tipe untuk Pagination
+type PaginationType = {
+    page: number;
+    total_data: number;
+    total_page: number;
+};
+
+// Tipe untuk Response Utama
+export type OrdersResponse = {
+    message: string;
+    code: number;
+    data: OrderType[];
+    pagination: PaginationType;
+};
 
 // Statistic response
 export interface StatisticResponse {

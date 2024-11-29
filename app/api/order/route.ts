@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Order, OrderStatus } from '@prisma/client';
 import { BaseAPIResponse } from '@/types/common';
 import prisma from '@/server/db';
+import { Prisma } from '@prisma/client';
 
 // Create a new Order
 export async function POST(req: NextRequest) {
@@ -96,14 +97,19 @@ export async function POST(req: NextRequest) {
     }
 }
 
-// Get all Orders
+// Get All Transactions
 export async function GET(req: NextRequest, res: NextResponse) {
     try {
         // Mendapatkan query parameters dari request
         const { searchParams } = new URL(req.url);
         const userId = searchParams.get('userId');
-        const limit = parseInt(searchParams.get('limit') || '10', 10); // default limit to 10 if not provided
+        const page = parseInt(searchParams.get('page') || '1', 10);
+        const pageSize = parseInt(searchParams.get('pageSize') || '10', 10);
+        const filters = JSON.parse(searchParams.get('filters') || '{}');
+        const searchTerm = searchParams.get('search') || '';
+        const skip = (page - 1) * pageSize;
 
+        // Validasi pengguna
         const user = await prisma.user.findUnique({
             where: {
                 id: userId || undefined
@@ -117,43 +123,83 @@ export async function GET(req: NextRequest, res: NextResponse) {
             );
         }
 
-        const orders = await prisma.order.findMany({
-            where: {
-                createdBy:
-                    user && user.role === 'reseller'
-                        ? userId || undefined
-                        : undefined,
-                ...(user && user.role === 'desain_setting'
-                    ? { status: 'PROOFING_APPROVED' }
-                    : {}),
-                ...(user?.role === 'printing'
-                    ? { status: 'DESAIN_SETTING' }
-                    : {}),
-                ...(user?.role === 'pressing' ? { status: 'PRINTING' } : {}),
-                ...(user?.role === 'sewing' ? { status: 'PRESSING' } : {}),
-                ...(user?.role === 'packing' ? { status: 'SEWING' } : {})
-            },
-            take: limit, // Menggunakan limit yang ditentukan
+        // Membuat kondisi where
+        const where: Prisma.OrderWhereInput = {
+            createdBy:
+                user && user.role === 'reseller'
+                    ? userId || undefined
+                    : undefined,
+            ...(user && user.role === 'desain_setting'
+                ? { status: 'PROOFING_APPROVED' }
+                : {}),
+            ...(user?.role === 'printing' ? { status: 'DESAIN_SETTING' } : {}),
+            ...(user?.role === 'pressing' ? { status: 'PRINTING' } : {}),
+            ...(user?.role === 'sewing' ? { status: 'PRESSING' } : {}),
+            ...(user?.role === 'packing' ? { status: 'SEWING' } : {}),
+            ...(filters && { ...filters }),
+            ...(searchTerm && {
+                OR: [
+                    {
+                        invoiceId: {
+                            contains: searchTerm,
+                            mode: 'insensitive' as Prisma.QueryMode
+                        }
+                    },
+                    {
+                        title: {
+                            contains: searchTerm,
+                            mode: 'insensitive' as Prisma.QueryMode
+                        }
+                    },
+                    {
+                        user: {
+                            email: {
+                                contains: searchTerm,
+                                mode: 'insensitive' as Prisma.QueryMode
+                            },
+                            name: {
+                                contains: searchTerm,
+                                mode: 'insensitive' as Prisma.QueryMode
+                            }
+                        }
+                    }
+                ]
+            })
+        };
+
+        // Mendapatkan transaksi
+        const transactions = await prisma.order.findMany({
+            where,
+            skip,
+            take: pageSize,
+            orderBy: { createdAt: 'desc' },
             include: {
                 user: true
-            },
-            orderBy: {
-                createdAt: 'desc'
             }
         });
 
-        const response: BaseAPIResponse<Order[]> = {
-            message: 'Orders fetched successfully',
+        // Menghitung total data
+        const totalTransactions = await prisma.order.count({ where });
+
+        // Membuat response
+        const response: BaseAPIResponse<typeof transactions> = {
+            message: 'Transactions fetched successfully',
             code: 200,
-            data: orders
+            data: transactions,
+            pagination: {
+                page,
+                total_data: totalTransactions,
+                total_page: Math.ceil(totalTransactions / pageSize)
+            }
         };
 
         return NextResponse.json(response);
     } catch (error) {
+        // Log error untuk debugging
         // eslint-disable-next-line no-console
-        console.error(error); // Log the error for debugging
+        console.error('Error fetching transactions:', error);
         return NextResponse.json(
-            { error: 'Error fetching orders', detail: error },
+            { error: 'Error fetching transactions', detail: error },
             { status: 500 }
         );
     }

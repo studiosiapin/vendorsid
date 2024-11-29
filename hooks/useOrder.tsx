@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { OrdersResponse } from '@/types/response';
+import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import Swal from 'sweetalert2';
 
 // Define the type for order detail
@@ -27,40 +29,65 @@ export interface orderFormDataType {
     orderDetails: OrderDetail[];
 }
 
-export function useGetAllOrders() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [orders, setOrders] = useState<orderFormDataType[]>();
-    const [error, setError] = useState<string | null>(null);
+export function useGetAllOrders(
+    userId: string | null,
+    currentPage: number,
+    searchTerm: string,
+    statusFilter: string,
+    itemsPerPage: number
+) {
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
-    const getAllOrders = async () => {
-        setIsLoading(true);
-        setError(null); // Reset any previous errors
+    // Mengatur debounce untuk pencarian
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm);
+        }, 500); // Sesuaikan durasi debounce
 
-        try {
-            const response = await fetch('/api/order');
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [searchTerm]);
 
-            const data: orderFormDataType[] = await response.json();
+    // Fungsi untuk mengambil data orders dari API
+    const fetchOrders = async () => {
+        const filters = {
+            ...(statusFilter !== 'ALL' && { status: statusFilter }) // Tambahkan filter status jika diperlukan
+        };
+        const response = await fetch(
+            `/api/order?userId=${userId}&page=${currentPage}&pageSize=${itemsPerPage}&filters=${JSON.stringify(
+                filters
+            )}&search=${debouncedSearchTerm}`
+        );
 
-            if (!response.ok) {
-                throw new Error('Something went wrong');
-            }
-
-            setOrders(data);
-            return data; // Returning the fetched data
-        } catch (error) {
-            setError('Error fetching orders');
-            // toast.error('Error fetching orders');
-            throw error; // Propagate the error
-        } finally {
-            setIsLoading(false);
+        if (!response.ok) {
+            throw new Error('Error fetching orders');
         }
+
+        const result: OrdersResponse = await response.json();
+        return result;
     };
 
+    // Menggunakan React Query untuk pengambilan data
+    const { data, isLoading, error, refetch } = useQuery(
+        [
+            'orders',
+            currentPage,
+            debouncedSearchTerm,
+            statusFilter,
+            itemsPerPage
+        ],
+        fetchOrders,
+        { enabled: !!userId }
+    );
+
     return {
-        isLoading,
-        orders,
-        error,
-        getAllOrders
+        orders: data?.data || [], // Data orders
+        totalPages: data?.pagination?.total_page || 1, // Total halaman
+        totalData: data?.pagination?.total_data || 0, // Total data
+        isLoading, // Status loading
+        error, // Error jika ada
+        refetch // Fungsi untuk melakukan fetch ulang
     };
 }
 

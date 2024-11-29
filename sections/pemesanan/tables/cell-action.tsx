@@ -10,6 +10,7 @@ import {
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { isAdmin } from '@/lib/utils';
+import { OrdersResponse, OrderType } from '@/types/response';
 import { Order } from '@prisma/client';
 import { Edit, MoreHorizontal, Trash, Eye } from 'lucide-react';
 import { useSession } from 'next-auth/react';
@@ -18,7 +19,7 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 interface OrderCellActionProps {
-    data: Order;
+    data: OrderType;
     onDeleted: () => void;
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import {
     Table,
     TableBody,
@@ -12,82 +12,115 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
-import { Pagination } from '@/types/common';
-import { CircleX } from 'lucide-react';
-import { Order } from '@prisma/client';
+import { CircleX, Info } from 'lucide-react';
+import { OrderStatus } from '@prisma/client';
 import { OrderCellAction } from './cell-action'; // Import the cell action component for Order
 import TableSkeleton from '@/components/skeleton/TableSkeleton';
 import BadgeStatus from '@/components/badge-status';
 import { useSession } from 'next-auth/react';
+import { useGetAllOrders } from '@/hooks/useOrder';
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem
+} from '@/components/ui/select'; // Import Select components
+// import { DatePicker } from '@/components/ui/datepicker'; // Import DatePicker component
+
+const pageSizeOptions = [5, 10, 20, 30, 40, 50]; // Define page size options
 
 export default function PemesananTable() {
     const session = useSession();
-    const [data, setData] = useState<Order[]>([]);
-    const [totalData, setTotalData] = useState(0);
-    const [pagination, setPagination] = useState<Pagination>();
+    const userId = session.data?.user.id; // Use the logged in user ID here
     const [searchQuery, setSearchQuery] = useState<string>(''); // Stored search query
     const [page, setPage] = useState<number>(1); // Current page number
-    const [limit, setLimit] = useState<number>(10); // Number of items per page
-    const userId = session.data?.user.id; // Use the logged in user ID here
-    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Ref to hold the timeout
-    const [isLoading, setIsLoading] = useState(true);
+    const [limit, setLimit] = useState<number>(5); // Number of items per page
+    const [statusFilter, setStatusFilter] = useState<string>('ALL'); // Status filter
+    const [createdAtFilter, setCreatedAtFilter] = useState<Date | null>(null); // Created At filter
 
-    // Function to update the URL parameters
-    const updateURLParams = () => {
-        const url = new URL(window.location.href);
-        url.searchParams.set('searchQuery', searchQuery);
-        url.searchParams.set('page', page.toString());
-        url.searchParams.set('limit', limit.toString());
-        window.history.pushState({}, '', url);
-    };
-
-    // Fetch data function
-    const fetchData = async () => {
-        setIsLoading(true);
-        try {
-            const response = await fetch(
-                `/api/order?searchQuery=${encodeURIComponent(
-                    searchQuery
-                )}&userId=${encodeURIComponent(
-                    userId || ''
-                )}&page=${page}&limit=${limit}`
-            );
-            const result = await response.json();
-            setData(result.data);
-            setPagination(result.pagination);
-            setTotalData(result.total);
-            setIsLoading(false);
-        } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error('Error fetching data:', error);
-            setIsLoading(false);
-        }
-    };
-
-    // Effect to handle debouncing and fetching
-    useEffect(() => {
-        if (debounceTimeoutRef.current) {
-            clearTimeout(debounceTimeoutRef.current);
-        }
-
-        debounceTimeoutRef.current = setTimeout(() => {
-            fetchData();
-            updateURLParams();
-        }, 500); // 500 ms debounce time
-
-        return () => {
-            if (debounceTimeoutRef.current) {
-                clearTimeout(debounceTimeoutRef.current);
-            }
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchQuery, page, limit]); // Dependencies to fetch data
+    const { orders, totalPages, totalData, isLoading, refetch } =
+        useGetAllOrders(userId || null, page, searchQuery, statusFilter, limit);
 
     // Check if any filters are active
-    const isFilterActive = Boolean(searchQuery);
+    const isFilterActive = Boolean(
+        searchQuery || statusFilter || createdAtFilter
+    );
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
+    };
+
+    const renderPageNumbers = () => {
+        const pageNumbers = [];
+        const totalPagesToShow = 5;
+
+        if (totalPages <= totalPagesToShow) {
+            for (let i = 1; i <= totalPages; i++) {
+                pageNumbers.push(
+                    <Button
+                        key={i}
+                        variant={page === i ? 'default' : 'outline'}
+                        size="icon"
+                        onClick={() => handlePageChange(i)}
+                    >
+                        {i}
+                    </Button>
+                );
+            }
+        } else {
+            let startPage = Math.max(1, page - 2);
+            let endPage = Math.min(totalPages, page + 2);
+
+            if (page <= 3) {
+                endPage = 5;
+            } else if (page >= totalPages - 2) {
+                startPage = totalPages - 4;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                pageNumbers.push(
+                    <Button
+                        key={i}
+                        variant={page === i ? 'default' : 'outline'}
+                        size="icon"
+                        onClick={() => handlePageChange(i)}
+                    >
+                        {i}
+                    </Button>
+                );
+            }
+
+            if (startPage > 1) {
+                pageNumbers.unshift(<span key="start-ellipsis">...</span>);
+                pageNumbers.unshift(
+                    <Button
+                        key={1}
+                        variant={page === 1 ? 'default' : 'outline'}
+                        size="icon"
+                        onClick={() => handlePageChange(1)}
+                    >
+                        1
+                    </Button>
+                );
+            }
+
+            if (endPage < totalPages) {
+                pageNumbers.push(<span key="end-ellipsis">...</span>);
+                pageNumbers.push(
+                    <Button
+                        key={totalPages}
+                        variant={page === totalPages ? 'default' : 'outline'}
+                        size="icon"
+                        onClick={() => handlePageChange(totalPages)}
+                    >
+                        {totalPages}
+                    </Button>
+                );
+            }
+        }
+
+        return pageNumbers;
     };
 
     return (
@@ -97,15 +130,38 @@ export default function PemesananTable() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search..."
+                    placeholder="Search by Invoice ID, Title, Name or Email..."
                     className="rounded border border-gray-300 p-2"
                 />
-
+                <Select
+                    value={statusFilter}
+                    onValueChange={(value) => setStatusFilter(value)}
+                >
+                    <SelectTrigger className="rounded border border-gray-300 p-2">
+                        <SelectValue placeholder="Filter by Status" />
+                    </SelectTrigger>
+                    <SelectContent side="top">
+                        <SelectItem value="ALL">All Statuses</SelectItem>
+                        {Object.values(OrderStatus).map((status) => (
+                            <SelectItem key={status} value={status}>
+                                {status}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                {/* <DatePicker
+                    selected={createdAtFilter}
+                    onChange={(date) => setCreatedAtFilter(date)}
+                    placeholderText="Filter by Created At"
+                    className="rounded border border-gray-300 p-2"
+                /> */}
                 {/* Reset filters button */}
                 {isFilterActive && (
                     <Button
                         onClick={() => {
                             setSearchQuery('');
+                            setStatusFilter('ALL');
+                            setCreatedAtFilter(null);
                         }}
                         variant={'outline'}
                     >
@@ -114,19 +170,21 @@ export default function PemesananTable() {
                 )}
             </div>
 
-            {data.length > 0 && !isLoading && (
+            {orders.length > 0 && !isLoading && (
                 <Table className="rounded border-2">
                     <TableHeader>
                         <TableRow>
                             <TableHead>Invoice ID</TableHead>
                             <TableHead>Title</TableHead>
+                            <TableHead>Order By</TableHead>
+                            <TableHead>Email</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Created At</TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {data.map((order) => (
+                        {orders.map((order) => (
                             <TableRow key={order.id}>
                                 <TableCell>{order.invoiceId}</TableCell>
                                 <TableCell>
@@ -134,8 +192,12 @@ export default function PemesananTable() {
                                         {order.title}
                                     </div>
                                 </TableCell>
+                                <TableCell>{order.user.name}</TableCell>
+                                <TableCell>{order.user.email}</TableCell>
                                 <TableCell>
-                                    <BadgeStatus status={order.status} />
+                                    <BadgeStatus
+                                        status={order.status as OrderStatus}
+                                    />
                                 </TableCell>
                                 <TableCell>
                                     {new Date(
@@ -146,7 +208,7 @@ export default function PemesananTable() {
                                     <OrderCellAction
                                         data={order}
                                         onDeleted={() => {
-                                            fetchData(); // Re-fetch data to update the table after deleting
+                                            refetch();
                                         }}
                                     />
                                 </TableCell>
@@ -155,39 +217,64 @@ export default function PemesananTable() {
                     </TableBody>
                 </Table>
             )}
-            {!isLoading && data.length === 0 && <div>No data available.</div>}
+            {!isLoading && orders.length === 0 && (
+                <div className="py-10 text-center text-muted-foreground">
+                    <Info className="mx-auto mb-5 h-20 w-20 text-zinc-300 dark:text-zinc-600 " />
+                    No transactions found
+                </div>
+            )}
 
             <TableSkeleton show={isLoading} />
 
             {/* Pagination controls */}
-            <div className="mt-4 flex items-center justify-end gap-3">
-                <Button
-                    onClick={() => handlePageChange(page > 1 ? page - 1 : 1)}
-                    disabled={page === 1}
-                    aria-label="Go to prev page"
-                    variant="outline"
-                    className="h-8 w-8 p-0"
-                >
-                    <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
-                </Button>
-                <span className="text-sm font-medium">
-                    Page {pagination?.page} of {pagination?.total_page}
-                </span>
-                <Button
-                    onClick={() =>
-                        handlePageChange(
-                            page < Math.ceil(totalData / limit)
-                                ? page + 1
-                                : page
-                        )
-                    }
-                    disabled={page >= Math.ceil(totalData / limit)}
-                    aria-label="Go to next page"
-                    variant="outline"
-                    className="h-8 w-8 p-0"
-                >
-                    <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
-                </Button>
+            <div className="mt-4 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                    <Select
+                        value={`${limit}`}
+                        onValueChange={(value) => {
+                            setLimit(Number(value));
+                            setPage(1);
+                        }}
+                    >
+                        <SelectTrigger className="h-8 w-[70px]">
+                            <SelectValue placeholder={limit} />
+                        </SelectTrigger>
+                        <SelectContent side="top">
+                            {pageSizeOptions.map((pageSize) => (
+                                <SelectItem
+                                    key={pageSize}
+                                    value={`${pageSize}`}
+                                >
+                                    {pageSize}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <div className="text-sm text-muted-foreground">
+                        Showing {(page - 1) * limit + 1} to{' '}
+                        {Math.min(page * limit, totalData)} of {totalData}{' '}
+                        results
+                    </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page === 1}
+                    >
+                        <ChevronLeftIcon className="h-4 w-4" />
+                    </Button>
+                    {renderPageNumbers()}
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page === totalPages}
+                    >
+                        <ChevronRightIcon className="h-4 w-4" />
+                    </Button>
+                </div>
             </div>
         </div>
     );

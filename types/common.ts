@@ -10,10 +10,7 @@ export type BaseAPIResponse<T = any> = {
 };
 
 export type Pagination = {
-    next_page: string;
-    last_page: string;
     page: number;
-    data_in_page: number;
     total_page: number;
     total_data: number;
 };
