@@ -80,13 +80,7 @@ export async function GET(req: NextRequest) {
             code: 200,
             data: learningList,
             pagination: {
-                next_page:
-                    page < Math.ceil(totalLearning / limit)
-                        ? `${page + 1}`
-                        : '',
-                last_page: `${Math.ceil(totalLearning / limit)}`,
                 page: page,
-                data_in_page: learningList.length,
                 total_page: Math.ceil(totalLearning / limit),
                 total_data: totalLearning
             }

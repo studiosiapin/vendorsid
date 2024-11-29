@@ -79,13 +79,7 @@ export async function GET(req: NextRequest) {
             code: 200,
             data: shipmentList,
             pagination: {
-                next_page:
-                    page < Math.ceil(totalShipment / limit)
-                        ? `${page + 1}`
-                        : '',
-                last_page: `${Math.ceil(totalShipment / limit)}`,
                 page: page,
-                data_in_page: shipmentList.length,
                 total_page: Math.ceil(totalShipment / limit),
                 total_data: totalShipment
             }

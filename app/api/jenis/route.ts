@@ -82,11 +82,7 @@ export async function GET(req: NextRequest) {
             code: 200,
             data: jenisList,
             pagination: {
-                next_page:
-                    page < Math.ceil(totalJenis / limit) ? `${page + 1}` : '',
-                last_page: `${Math.ceil(totalJenis / limit)}`,
                 page: page,
-                data_in_page: jenisList.length,
                 total_page: Math.ceil(totalJenis / limit),
                 total_data: totalJenis
             }

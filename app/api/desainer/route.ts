@@ -89,13 +89,7 @@ export async function GET(req: NextRequest) {
             code: 200,
             data: desainerList,
             pagination: {
-                next_page:
-                    page < Math.ceil(totalDesainer / limit)
-                        ? `${page + 1}`
-                        : '',
-                last_page: `${Math.ceil(totalDesainer / limit)}`,
                 page: page,
-                data_in_page: desainerList.length,
                 total_page: Math.ceil(totalDesainer / limit),
                 total_data: totalDesainer
             }

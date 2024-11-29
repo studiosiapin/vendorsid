@@ -78,11 +78,7 @@ export async function GET(req: NextRequest) {
             code: 200,
             data: ukuranList,
             pagination: {
-                next_page:
-                    page < Math.ceil(totalUkuran / limit) ? `${page + 1}` : '',
-                last_page: `${Math.ceil(totalUkuran / limit)}`,
                 page: page,
-                data_in_page: ukuranList.length,
                 total_page: Math.ceil(totalUkuran / limit),
                 total_data: totalUkuran
             }

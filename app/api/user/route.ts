@@ -92,11 +92,7 @@ export async function GET(req: NextRequest) {
             code: 200,
             data: users,
             pagination: {
-                next_page:
-                    page < Math.ceil(totalUsers / limit) ? `${page + 1}` : '',
-                last_page: `${Math.ceil(totalUsers / limit)}`,
                 page: page,
-                data_in_page: users.length,
                 total_page: Math.ceil(totalUsers / limit),
                 total_data: totalUsers
             }

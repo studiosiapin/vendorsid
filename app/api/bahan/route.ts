@@ -79,13 +79,9 @@ export async function GET(req: NextRequest) {
             code: 200,
             data: bahanList,
             pagination: {
-                next_page:
-                    page < Math.ceil(totalBahan / limit) ? `${page + 1}` : '',
-                last_page: `${Math.ceil(totalBahan / limit)}`,
-                page: page,
-                data_in_page: bahanList.length,
+                total_data: totalBahan,
                 total_page: Math.ceil(totalBahan / limit),
-                total_data: totalBahan
+                page
             }
         };
 
