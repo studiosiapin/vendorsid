@@ -17,6 +17,7 @@ import { Pagination } from '@/types/common';
 import { CellAction } from './cell-action';
 import { CircleX } from 'lucide-react';
 import TableSkeleton from '@/components/skeleton/TableSkeleton';
+import Image from 'next/image';
 
 export default function EmployeeTable() {
     const [data, setData] = useState<User[]>([]);
@@ -146,6 +147,7 @@ export default function EmployeeTable() {
                 <Table className="rounded border-2">
                     <TableHeader>
                         <TableRow>
+                            <TableHead>Picture</TableHead>
                             <TableHead>Name</TableHead>
                             <TableHead>Email</TableHead>
                             <TableHead>Gender</TableHead>
@@ -157,6 +159,18 @@ export default function EmployeeTable() {
                     <TableBody>
                         {data.map((user) => (
                             <TableRow key={user.id}>
+                                <TableCell>
+                                    <Image
+                                        src={
+                                            user.picture ||
+                                            '/images/default.jpg'
+                                        }
+                                        alt={user.name}
+                                        width={100}
+                                        height={100}
+                                        className="h-10 w-10 rounded-full object-cover"
+                                    />
+                                </TableCell>
                                 <TableCell>{user.name}</TableCell>
                                 <TableCell>{user.email}</TableCell>
                                 <TableCell>{user.gender}</TableCell>
