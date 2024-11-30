@@ -153,14 +153,28 @@ export async function GET(req: NextRequest, res: NextResponse) {
                     },
                     {
                         user: {
-                            email: {
-                                contains: searchTerm,
-                                mode: 'insensitive' as Prisma.QueryMode
-                            },
-                            name: {
-                                contains: searchTerm,
-                                mode: 'insensitive' as Prisma.QueryMode
-                            }
+                            OR: [
+                                {
+                                    email: {
+                                        contains: searchTerm,
+                                        mode: 'insensitive' as Prisma.QueryMode
+                                    }
+                                },
+                                {
+                                    name: {
+                                        contains: searchTerm,
+                                        mode: 'insensitive' as Prisma.QueryMode
+                                    }
+                                },
+                                {
+                                    AND: searchTerm.split(' ').map((term) => ({
+                                        name: {
+                                            contains: term,
+                                            mode: 'insensitive' as Prisma.QueryMode
+                                        }
+                                    }))
+                                }
+                            ]
                         }
                     }
                 ]

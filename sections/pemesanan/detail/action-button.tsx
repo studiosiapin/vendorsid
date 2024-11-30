@@ -481,17 +481,18 @@ const ActionButtons = ({ order, onUpdated }: ActionButtonsProps) => {
             )}
 
             {/* WAITING_SETTLEMENT STEP */}
-            {order.status === 'WAITING_SETTLEMENT' && isAdmin && (
-                <Button
-                    disabled={isUpdating}
-                    onClick={() => {
-                        setSelectedStatus('COMPLETED');
-                        setShowModal(true);
-                    }}
-                >
-                    Selesaikan Pesanan
-                </Button>
-            )}
+            {order.status === 'WAITING_SETTLEMENT' &&
+                (isAdmin || isReseller) && (
+                    <Button
+                        disabled={isUpdating}
+                        onClick={() => {
+                            setSelectedStatus('COMPLETED');
+                            setShowModal(true);
+                        }}
+                    >
+                        Selesaikan Pesanan
+                    </Button>
+                )}
 
             {showModal && (
                 <>
