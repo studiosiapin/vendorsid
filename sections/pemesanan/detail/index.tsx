@@ -236,7 +236,7 @@ const DetailPageOrder = () => {
                                         </p>
                                         <p>
                                             <Link
-                                                href={`/tracking/${order.id}`}
+                                                href={`/tracking/${order.invoiceId}`}
                                                 className="text-blue-500 underline"
                                                 target="_blank"
                                             >

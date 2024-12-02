@@ -286,6 +286,36 @@ export function useOrderProgress() {
     };
 }
 
+// Get Order Progress by InvoiceId
+export function useOrderTracking() {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const getOrderTracking = async (invoiceId: string) => {
+        setIsLoading(true);
+        try {
+            const response = await fetch(`/api/tracking/${invoiceId}`, {});
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Something went wrong');
+            }
+
+            return data; // Return the order progress object returned from API
+        } catch (error) {
+            // toast.error('Error fetching order progress');
+            throw error; // Propagate the error to the caller
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return {
+        isLoading,
+        getOrderTracking
+    };
+}
+
 // Complete Order
 export function useCompleteOrder() {
     const [isLoading, setIsLoading] = useState(false);
