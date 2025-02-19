@@ -5,7 +5,8 @@ const nextConfig = {
         domains: [
             'utfs.io',
             'api.slingacademy.com',
-            'bnumduzaszvwhatwtvoe.supabase.co'
+            'bnumduzaszvwhatwtvoe.supabase.co',
+            'images.unsplash.com'
         ]
     }
 };
